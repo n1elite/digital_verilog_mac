@@ -32,8 +32,8 @@ module macarray (
 	
 	reg [3:0] wgt_matrix [3:0];
 	reg [3:0] inp_matrix [15:0]
-	wire [3:0] wgt_take [63:0];
-	wire [3:0] inp_take [63:0];
+	wire [3:0] wgt_take [31:0];
+	wire [3:0] inp_take [31:0];
 	reg [3:0] m_count, n_count, t_count;
 	reg [3:0] done, count;
 	wire [3:0] m_value, n_value, t_value;
@@ -68,11 +68,11 @@ module macarray (
 	end
 		
 	generate
-		for(i=0; i<8; i = i+1) begin
-			assign inp_take[i + t_count*8] = RDATA_I[63-i*7 : 56-i*7];
+		for(i=0; i<4; i = i+1) begin
+			assign inp_take[i + t_count*4] = RDATA_I[31-i*8 : 24-i*8];
 		end
-		for(j=0; j<8, j=j+1) begin
-			assign wgt_take[j + m_count*8] = RDATA_W[63-j*7 : 56-j*7];
+		for(j=0; j<4, j=j+1) begin
+			assign wgt_take[j + m_count*4] = RDATA_W[31-j*8 : 24-j*8];
 		end
 	endgenerate
 	
@@ -83,9 +83,9 @@ module macarray (
 		end 
 		else begin 
 			for(p=0; p<4; p=p+1) begin
-				int_matrix[p+row_count*4] <= int_take[p + t_count*8];
+				int_matrix[p+row_count*4] <= RDATA_I[63-p*8, 56-p*8];
 			end
-			wgt_matrix[q] <= wgt_take[q + m_count*8];
+			wgt_matrix[q] <= RDATA_W[63-q*8, 56-q*8];
 			
 			if(q<3) q <= q+1;
 			else if(q >= 3) q <= 0;
@@ -173,10 +173,11 @@ module macarray (
 			end
 		end	
 	end 
-	
-
 
 endmodule
+
+
+
 
 module block(inp_north, inp_matrix, inp_west, clk, rst, outp_south, result);
 	input [7:0] inp_north, inp_west, inp_matrix;
