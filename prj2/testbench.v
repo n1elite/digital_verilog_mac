@@ -76,8 +76,8 @@ module testbench;
 		.CSN		(~EN_O),
 		.A			(ADDR_O),
 		.WEN		(~RW_O),
-		.DI			(WDATA_O),
-		.DOUT		(RDATA_O)
+		.DI			(WDATA_O), //Write data
+		.DOUT		(RDATA_O)  //Read data
 	);
 
 	defparam testbench.INPUT_MEM.MEM_FILE = "input.hex";
