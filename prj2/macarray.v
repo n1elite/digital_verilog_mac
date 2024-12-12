@@ -36,19 +36,16 @@ module macarray (
     //Variable Declaration
 
     wire [3:0] N, M, T;
-    wire  [63:0] matrix_I;
-    wire  [63:0] matrix_W;
+
+    wire [3:0] cal_case;
+
+    wire [2:0] N_first, N_second, N_choice;
+
 
     reg [7:0] a11, a12, a13, a14;
     reg [7:0] a21, a22, a23, a24;
     reg [7:0] a31, a32, a33, a34;
     reg [7:0] a41, a42, a43, a44;
-
-    reg [7:0] b11, b12, b13, b14;
-    reg [7:0] b21, b22, b23, b24;
-    reg [7:0] b31, b32, b33, b34;
-    reg [7:0] b41, b42, b43, b44;
-
 
     reg [7:0] wb51 wb52 wb53 wb54;
     reg [7:0] wb41 wb42 wb43 wb44;
@@ -57,14 +54,14 @@ module macarray (
     reg [7:0] wb11 wb12 wb13 wb14;
 
 
+    reg [2:0] read_input_line;
 
+    reg [1:0] set_input_line;
 
-    reg [3:0] readcount_I_flag;
-    reg [3:0] readcount_W_flag;
+    reg N_flag;
 
-    reg weight_delay;
-    reg error_flag;
-
+    reg [3:0] EN_cal_row;
+    reg [3:0] EN_cal_col;
 
     //Variable Initialize
 
@@ -72,230 +69,17 @@ module macarray (
     assign M = [7:4]    NMT;
     assign T = [3:0]    MNT;
 
-/*
-    always @(posedge CLK or negedge RSTN) begin
-        if(START == 1) begin
-            if (readcount_I_flag < T) begin
-                readcount_I_flag <= readcount_I_flag + 1;
-            end
-            // if (readcount_W_flag < M) begin
-            //     readcount_W_flag <= readcount_I_flag + 1;
-            // end
-        end
-    end
-*/
-//    assign ADDR_I = readcount_I_flag;
+    assign N_first  =   (N < 5) ?   N   :   4;
+    assign N_second =   (N < 5) ?   0   :   N-4;
+    assign N_choice =   (N_flag == 0)   ?   N_first :   N_second;
 
 
-
-/*
-    always @(posedge CLK or negedge RSTN) begin
-        if(START == 1) begin
-            if (readcount_W_flag < M) begin
-                if(weight_delay == 0) begin
-                    readcount_W_flag <= readcount_W_flag + 1;
-                end else begin
-                end
-            end
-        end
-    end
-
-    assign EN_W     = (readcount_W_flag < M)    ?   ((weight_delay==0)   ?   1   :   0   ):   0;
-    assign ADDR_W   = readcount_W_flag;
-*/
+     assign cal_case =   (N < 5) ? ((T < 5) ? ((M < 5) ? 0 : 1) : ((M < 5) ? 2 : 3)) : ((T < 5) ? ((M < 5) ? 4 : 5) : ((M < 5) ? 6 : 7));
+                                             
 
 
 
 
-    // 생각해보니깐 W는 N에 다라서 변경할 필요가 없음
-    // 그리고 I는 N이 4미만일 때 변경할 필요가 없을 듯
-    assign matrix_I =   (N == 0)    ?   {64'b0}                     :
-                        (N == 1)    ?   {RDATA_I[63:56] , 56'b0}    :
-                        (N == 2)    ?   {RDATA_I[63:48] , 48'b0}    :
-                        (N == 3)    ?   {RDATA_I[63:40] , 40'b0}    :
-                        (N == 4)    ?   {RDATA_I[63:32] , 32'b0}    :
-                        (N == 5)    ?   {RDATA_I[63:24] , 24'b0}    :
-                        (N == 6)    ?   {RDATA_I[63:16] , 16'b0}    :
-                        (N == 7)    ?   {RDATA_I[63:8] , 8'b0}      :
-                        (N == 8)    ?   {RDATA_I[63:0]}             :   {64'b0};
-
-    assign matrix_W =   (N == 0)    ?   {64'b0}                     :
-                        (N == 1)    ?   {RDATA_W[63:56] , 56'b0}    :
-                        (N == 2)    ?   {RDATA_W[63:48] , 48'b0}    :
-                        (N == 3)    ?   {RDATA_W[63:40] , 40'b0}    :
-                        (N == 4)    ?   {RDATA_W[63:32] , 32'b0}    :
-                        (N == 5)    ?   {RDATA_W[63:24] , 24'b0}    :
-                        (N == 6)    ?   {RDATA_W[63:16] , 16'b0}    :
-                        (N == 7)    ?   {RDATA_W[63:8] , 8'b0}      :
-                        (N == 8)    ?   {RDATA_W[63:0]}             :   {64'b0};
-
-
-    always @(posedge CLK or negedge RSTN) begin
-        if(START == 1) begin
-
-            if(N < 5) begin
-
-                if(T < 5) begin
-                    case (readcount_I_flag)
-                        0: begin
-                            {a11, a12, a13, a14} <= matrix_I[63:32];
-                        end
-                        1: begin
-                            {a21, a22, a23, a24} <= matrix_I[63:32];
-                        end
-                        2: begin
-                            {a31, a32, a33, a34} <= matrix_I[63:32];
-                        end
-                        3: begin
-                            {a41, a42, a43, a44} <= matrix_I[63:32];
-                        end
-                        default: begin
-                        // 필요한 경우 추가 작업
-                        end
-                    endcase
-
-                end else if (T >= 5) begin
-                    if(M >= 5) begin
-                        case (readcount_I_flag)
-                            0 , 4: begin
-                                {a11, a12, a13, a14} <= matrix_I[63:32];
-                            end
-                            1 , 5: begin
-                                {a21, a22, a23, a24} <= matrix_I[63:32];
-                            end
-                            2 , 6: begin
-                                {a31, a32, a33, a34} <= matrix_I[63:32];
-                            end
-                            3 , 7: begin
-                                {a41, a42, a43, a44} <= matrix_I[63:32];
-                            end
-                            default: begin
-                            // 필요한 경우 추가 작업
-                            end
-                        endcase 
-                    end else begin
-
-                    end
-
-                end
-
-
-
-            end else if (N >= 5) begin
-                if(T < 5) begin
-
-
-                end else if (T >= 5) begin
-
-
-                end
-            end
-        end
-    end
-
-
-/*
-                    case (readcount_I_flag)
-                        0: begin
-                            {a11, a12, a13, a14} <= matrix_I[63:32];
-                            {b11, b12, b13, b14} <= matrix_I[31:0];
-                        end
-                        1: begin
-                            {a21, a22, a23, a24} <= matrix_I[63:32];
-                            {b21, b22, b23, b24} <= matrix_I[31:0];
-                        end
-                        2: begin
-                            {a31, a32, a33, a34} <= matrix_I[63:32];
-                            {b31, b32, b33, b34} <= matrix_I[31:0];
-                        end
-                        3: begin
-                            {a41, a42, a43, a44} <= matrix_I[63:32];
-                            {b41, b42, b43, b44} <= matrix_I[31:0];
-                        end
-                        default: begin
-                        // 필요한 경우 추가 작업
-                        end
-                    endcase  
-*/
-/*  
-    always @(posedge CLK or negedge RSTN) begin
-        if(START == 1) begin
-            if(readcount_I_flag == 0) begin
-                a11 <= matrix_I[63:56];
-                a12 <= matrix_I[55:48];
-                a13 <= matrix_I[47:40];
-                a14 <= matrix_I[39:32];
-                b11 <= matrix_I[31:24];
-                b12 <= matrix_I[23:16];
-                b13 <= matrix_I[15:8];
-                b14 <= matrix_I[7:0];
-            end else if (readcount_I_flag == 1) begin
-                a21 <= matrix_I[63:56];
-                a22 <= matrix_I[55:48];
-                a23 <= matrix_I[47:40];
-                a24 <= matrix_I[39:32];
-                b21 <= matrix_I[31:24];
-                b22 <= matrix_I[23:16];
-                b23 <= matrix_I[15:8];
-                b24 <= matrix_I[7:0];
-            end else if (readcount_I_flag == 2) begin
-                a31 <= matrix_I[63:56];
-                a32 <= matrix_I[55:48];
-                a33 <= matrix_I[47:40];
-                a34 <= matrix_I[39:32];
-                b31 <= matrix_I[31:24];
-                b32 <= matrix_I[23:16];
-                b33 <= matrix_I[15:8];
-                b34 <= matrix_I[7:0];
-            end else if (readcount_I_flag == 3) begin
-                a41 <= matrix_I[63:56];
-                a42 <= matrix_I[55:48];
-                a43 <= matrix_I[47:40];
-                a44 <= matrix_I[39:32];
-                b41 <= matrix_I[31:24];
-                b42 <= matrix_I[23:16];
-                b43 <= matrix_I[15:8];
-                b44 <= matrix_I[7:0];
-            end else if (readcount_I_flag == 4) begin
-
-            end else if (readcount_I_flag == 5) begin
-
-            end else if (readcount_I_flag == 6) begin
-
-            end else if (readcount_I_flag == 7) begin
-
-            end
-        end
-    end
-*/
-
-
-
-
-	
-    // WRITE YOUR MAC_ARRAY DATAPATH CODE
-
-    //Variable Declaration
-
-
-
-    wire i11, i12, i13, i14;
-    wire i21, i22, i23, i24;
-    wire i31, i32, i33, i34;
-    wire i41, i42, i43, i44;
-
-    wire w11, w12, w13, w14;
-    wire w21, w22, w23, w24;
-    wire w31, w32, w33, w34;
-    wire w41, w42, w43, w44;
-
-
-
-
-    reg offset1, offset2, offset3, offset4;
-    reg cal_flag, cal_count;
-
-    //Variable Initialize
 
 
 
@@ -318,80 +102,347 @@ module macarray (
             a43 <= 0;
             a44 <= 0;
 
-            readcount_I_flag <= 0;
 
-            weight_delay <= 0;
-            readcount_W_flag <= 0;
+            read_input_line <= 0;
 
-            cal_flag <=0;
-        end
-        else begin
-            if(cal_flag == 0)begin
-                a11 <= i11 * w11;
-                a12 <= a11 + (i12 * w12);
-                a13 <= a12 + (i13 * w13);
-                a14 <= a13 + (i14 * w14);
-                a21 <= i21 * w21;
-                a22 <= a21 + (i22 * w22);
-                a23 <= a22 + (i23 * w23);
-                a24 <= a23 + (i24 * w24);
-                a31 <= i31 * w31;
-                a32 <= a31 + (i32 * w32);
-                a33 <= a32 + (i33 * w33);
-                a34 <= a33 + (i34 * w34);
-                a41 <= i41 * w41;
-                a42 <= a41 + (i42 * w42);
-                a43 <= a42 + (i43 * w43);
-                a44 <= a43 + (i44 * w44);
+            set_input_line <= 0;
 
-                offset1 <= a14;
-                offset2 <= a24;
-                offset3 <= a34;
-                offset4 <= a44;
-
-                cal_count <= cal_count + 1;
-                if (cal_count == 7) begin
-                    cal_flag <= 1;
-                    cal_count <= 0;
-                end
-            end else if (cal_flag == 1)begin
-                a11 <= offset1 + (i11 * w11);
-                a12 <= a11 + (i12 * w12);
-                a13 <= a12 + (i13 * w13);
-                a14 <= a13 + (i14 * w14);
-                a21 <= offset2 + (i21 * w21);
-                a22 <= a21 + (i22 * w22);
-                a23 <= a22 + (i23 * w23);
-                a24 <= a23 + (i24 * w24);
-                a31 <= offset3 + (i31 * w31);
-                a32 <= a31 + (i32 * w32);
-                a33 <= a32 + (i33 * w33);
-                a34 <= a33 + (i34 * w34);
-                a41 <= offset4 + (i41 * w41);
-                a42 <= a41 + (i42 * w42);
-                a43 <= a42 + (i43 * w43);
-                a44 <= a43 + (i44 * w44);
-
-                cal_count <= cal_count + 1;
-                if (cal_count == 7) begin
-                    cal_flag <= 0;
-                    cal_count <= 0;
-                end
-            end
         end
     end
+
+
+
+//여기서 들어가는 라인 설정 및
 
     always @(posedge CLK or negedge RSTN) begin
-        if(cal_flag == 0)begin
+        if(START == 1) begin
+            case (cal_case)
+                0: begin
+                end
+                1: begin
+                end
+                2: begin
+                end
+                3: begin
+                end
+                4: begin
+                end
+                5: begin
+                end
+                6: begin
+                end
+                7: begin
+                end
+            endcase
+        end
+    end
 
 
+//들어가는 RDATA_I위치
+    always @(posedge CLK or negedge RSTN) begin
+        if(START == 1) begin
+            case (N_first)
+                4: begin
+                    case (set_input_line)
+                        0   :   begin
+                            {a11, a12, a13, a14} <= RDATA_I[63:32]
+                        end
+                        1   :   begin
+                            {a21, a22, a23, a24} <= RDATA_I[63:32]
+                        end
+                        2   :   begin
+                            {a31, a32, a33, a34} <= RDATA_I[63:32]
+                        end
+                        3   :   begin
+                            {a41, a42, a43, a44} <= RDATA_I[63:32]
+                        end
+                    endcase
 
-        end else if (cal_flag == 1)begin
+                    EN_cal_col <= {4'b0000};
+                end
+                3: begin
+                    case (set_input_line)
+                        0   :   begin
+                            {a12, a13, a14} <= RDATA_I[63:40]
+                        end
+                        1   :   begin
+                            {a22, a23, a24} <= RDATA_I[63:40]
+                        end 
+                        2   :   begin
+                            {a32, a33, a34} <= RDATA_I[63:40]
+                        end
+                        3   :   begin
+                            {a42, a43, a44} <= RDATA_I[63:40]
+                                end
+                    endcase
 
+                    EN_cal_col <= {4'b1000};
+                end
+                2: begin
+                    case (set_input_line)
+                        0   :   begin
+                            {a13, a14} <= RDATA_I[63:48]
+                        end
+                        1   :   begin
+                            {a23, a24} <= RDATA_I[63:48]
+                        end
+                        2   :   begin
+                            {a33, a34} <= RDATA_I[63:48]
+                        end
+                        3   :   begin
+                            {a43, a44} <= RDATA_I[63:48]
+                        end
+                    endcase
+
+                    EN_cal_col <= {4'b1100};
+                end
+                1: begin
+                    case (set_input_line)
+                        0   :   begin
+                            {a14} <= RDATA_I[63:56]
+                        end
+                        1   :   begin
+                            {a24} <= RDATA_I[63:56]
+                        end
+                        2   :   begin
+                            {a34} <= RDATA_I[63:56]
+                        end
+                        3   :   begin
+                            {a44} <= RDATA_I[63:56]
+                        end
+                    endcase
+
+                    EN_cal_col <= {4'b1110};
+                end
+            endcase
         end
     end
 
 
 
+/*
+                    case (N_first)
+                        4: begin
+                            case (set_input_line)
+                                0   :   begin
+                                    {a11, a12, a13, a14} <= RDATA_I[63:32]
+                                end
+                                1   :   begin
+                                    {a21, a22, a23, a24} <= RDATA_I[63:32]
+                                end
+                                2   :   begin
+                                    {a31, a32, a33, a34} <= RDATA_I[63:32]
+                                end
+                                3   :   begin
+                                    {a41, a42, a43, a44} <= RDATA_I[63:32]
+                                end
+                            endcase
+
+                            EN_cal_col <= {4'b0000};
+                        end
+                        3: begin
+                            case (set_input_line)
+                                0   :   begin
+                                    {a12, a13, a14} <= RDATA_I[63:40]
+                                end
+                                1   :   begin
+                                    {a22, a23, a24} <= RDATA_I[63:40]
+                                end
+                                2   :   begin
+                                    {a32, a33, a34} <= RDATA_I[63:40]
+                                end
+                                3   :   begin
+                                    {a42, a43, a44} <= RDATA_I[63:40]
+                                end
+                            endcase
+
+                            EN_cal_col <= {4'b1000};
+                        end
+                        2: begin
+                            case (set_input_line)
+                                0   :   begin
+                                    {a13, a14} <= RDATA_I[63:48]
+                                end
+                                1   :   begin
+                                    {a23, a24} <= RDATA_I[63:48]
+                                end
+                                2   :   begin
+                                    {a33, a34} <= RDATA_I[63:48]
+                                end
+                                3   :   begin
+                                    {a43, a44} <= RDATA_I[63:48]
+                                end
+                            endcase
+
+                            EN_cal_col <= {4'b1100};
+                        end
+                        1: begin
+                            case (set_input_line)
+                                0   :   begin
+                                    {a14} <= RDATA_I[63:56]
+                                end
+                                1   :   begin
+                                    {a24} <= RDATA_I[63:56]
+                                end
+                                2   :   begin
+                                    {a34} <= RDATA_I[63:56]
+                                end
+                                3   :   begin
+                                    {a44} <= RDATA_I[63:56]
+                                end
+                            endcase
+
+                            EN_cal_col <= {4'b1110};
+                        end
+                    endcase
+*/
+
+
+
+
+
+/*
+    always @(posedge CLK or negedge RSTN) begin
+        if(START == 1) begin
+            case (N_second)
+                4   :   begin
+
+                end
+
+                3   :   begin
+
+                end
+
+                2   :   begin
+
+                end
+
+                1   :   begin
+
+                end
+
+                0   :   begin
+                    case (N_first)
+                        4   :   begin
+                            case (set_input_line)
+                                0   :   begin
+                                    {a11, a12, a13, a14} <= RDATA_I[63:32]
+                                end
+                                1   :   begin
+                                    {a21, a22, a23, a24} <= RDATA_I[63:32]
+                                end
+                                2   :   begin
+                                    {a31, a32, a33, a34} <= RDATA_I[63:32]
+                                end
+                                3   :   begin
+                                    {a41, a42, a43, a44} <= RDATA_I[63:32]
+                                end
+                            endcase
+
+                            EN_cal_col <= {4'b0000};
+                        end
+                        3   :   begin
+                            case (set_input_line)
+                                0   :   begin
+                                    {a12, a13, a14} <= RDATA_I[63:40]
+                                end
+                                1   :   begin
+                                    {a22, a23, a24} <= RDATA_I[63:40]
+                                end
+                                2   :   begin
+                                    {a32, a33, a34} <= RDATA_I[63:40]
+                                end
+                                3   :   begin
+                                    {a42, a43, a44} <= RDATA_I[63:40]
+                                end
+                            endcase
+
+                            EN_cal_col <= {4'b1000};
+                        end
+
+                        2   :   begin
+
+                        end
+
+                        1   :   begin
+
+                        end
+                    endcase
+                end
+            endcase
+        end
+    end
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+    // WRITE YOUR MAC_ARRAY DATAPATH CODE
+
+
+    block P0 (wgt_matrix[0], inp_matrix[0], 0, CLK, RSTN, outp_south0, result0);
+	//from north
+	block P1 (wgt_matrix[1], inp_matrix[1], result0, CLK, RSTN, outp_south1, result1);
+	block P2 (wgt_matrix[2], inp_matrix[2], result1, CLK, RSTN, outp_south2, result2);
+	block P3 (wgt_matrix[3], inp_matrix[3], result2, CLK, RSTN, outp_south3, result3);
+	
+	//from west
+	block P4 (outp_south0, inp_matrix[4], 0, CLK, RSTN, outp_south4, result4);
+	block P8 (outp_south4, inp_matrix[8], 0, CLK, RSTN, outp_south8, result8);
+	block P12 (outp_south8, inp_matrix[12], 0, CLK, RSTN, outp_south12, result12);
+	//second row
+	block P5 (outp_south1, inp_matrix[5], result4, CLK, RSTN, outp_south5, result5);
+	block P6 (outp_south2, inp_matrix[6], result5, CLK, RSTN, outp_south6, result6);
+	block P7 (outp_south3, inp_matrix[7], result6, CLK, RSTN, outp_south7, result7);
+	//third row
+	block P9 (outp_south5, inp_matrix[9], result8, CLK, RSTN, outp_south9, result9);
+	block P10 (outp_south6, inp_matrix[10], result9, CLK, RSTN, outp_south10, result10);
+	block P11 (outp_south7, inp_matrix[11], result10, CLK, RSTN, outp_south11, result11);
+	//fourth row
+	block P13 (outp_south9, inp_matrix[13], result12, CLK, RSTN, outp_south13, result13);
+	block P14 (outp_south10, inp_matrix[14], result13, CLK, RSTN, outp_south14, result14);
+	block P15 (outp_south11, inp_matrix[15], result14, CLK, RSTN, outp_south15, result15);
+
+
+    
+
+
+
+endmodule
+
+
+//input에 EN 신호 두개 넣어서 col x => x    // col o && row x => x  // col && row o => o
+module block(inp_north, inp_matrix, inp_west, clk, rst, outp_south, result);
+	input [7:0] inp_north, inp_west, inp_matrix;
+	output reg [7:0] outp_south;
+	input clk, rst;
+	output reg [15:0] result;
+	wire [15:0] multi;
+	
+	always @(posedge rst or posedge clk) begin
+		if(~rst) begin
+			result <= 0;
+			outp_south <= 0;
+		end
+		else begin
+			outp_south <= inp_north;  //weight
+			result <= inp_west + multi;
+		end
+	end
+	
+	assign multi = inp_north*input_matrix;
 
 endmodule
