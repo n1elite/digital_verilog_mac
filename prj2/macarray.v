@@ -47,11 +47,18 @@ module macarray (
     reg [7:0] a31, a32, a33, a34;
     reg [7:0] a41, a42, a43, a44;
 
-    reg [7:0] wb51 wb52 wb53 wb54;
-    reg [7:0] wb41 wb42 wb43 wb44;
-    reg [7:0] wb31 wb32 wb33 wb34;
-    reg [7:0] wb21 wb22 wb23 wb24;
+
+    reg [7:0]                wb44;
+    reg [7:0]           wb33 wb34;
+    reg [7:0]      wb22 wb23 wb24;
     reg [7:0] wb11 wb12 wb13 wb14;
+
+
+    reg  EN11, EN12, EN13, EN14;
+    reg  EN21, En22, EN23, EN24;
+    reg  EN31, EN32, EN33, EN34;
+    reg  EN41, EN42, EN43, EN44;
+
 
 
     reg [2:0] read_input_line;
@@ -60,8 +67,7 @@ module macarray (
 
     reg N_flag;
 
-    reg [3:0] EN_cal_row;
-    reg [3:0] EN_cal_col;
+    reg EN_row1, EN_row2, EN_row3, EN_row4;
 
     //Variable Initialize
 
@@ -141,6 +147,186 @@ module macarray (
 //들어가는 RDATA_I위치
     always @(posedge CLK or negedge RSTN) begin
         if(START == 1) begin
+            if(N_flag == 0) begin
+                case (N_first)
+                    4: begin
+                        case (set_input_line)
+                            0   :   begin
+                                {a11, a12, a13, a14} <= RDATA_I[63:32];
+                                {EN11, EN12, EN13, EN14} <= 4'b0000;
+                            end
+                            1   :   begin
+                                {a21, a22, a23, a24} <= RDATA_I[63:32];
+                                {EN21, EN22, EN23, EN24} <= 4'b0000;
+                            end
+                            2   :   begin
+                                {a31, a32, a33, a34} <= RDATA_I[63:32];
+                                {EN31, EN32, EN33, EN34} <= 4'b0000;
+                            end
+                            3   :   begin
+                                {a41, a42, a43, a44} <= RDATA_I[63:32];
+                                {EN41, EN42, EN43, EN44} <= 4'b0000;
+                            end
+                        endcase
+
+                    end
+                    3: begin
+                        case (set_input_line)
+                            0   :   begin
+                                {a12, a13, a14} <= RDATA_I[63:40];
+                                {EN11, EN12, EN13, EN14} <= 4'b1000;
+                            end
+                            1   :   begin
+                                {a22, a23, a24} <= RDATA_I[63:40];
+                                {EN21, EN22, EN23, EN24} <= 4'b1000;
+                            end 
+                            2   :   begin
+                                {a32, a33, a34} <= RDATA_I[63:40];
+                                {EN31, EN32, EN33, EN34} <= 4'b1000;
+                            end
+                            3   :   begin
+                                {a42, a43, a44} <= RDATA_I[63:40];
+                                {EN41, EN42, EN43, EN44} <= 4'b1000;
+                            end
+                        endcase
+
+                    end
+                    2: begin
+                        case (set_input_line)
+                            0   :   begin
+                                {a13, a14} <= RDATA_I[63:48];
+                                {EN11, EN12, EN13, EN14} <= 4'b1100;
+                            end
+                            1   :   begin
+                                {a23, a24} <= RDATA_I[63:48];
+                                {EN21, EN22, EN23, EN24} <= 4'b1100;
+                            end
+                            2   :   begin
+                                {a33, a34} <= RDATA_I[63:48];
+                                {EN31, EN32, EN33, EN34} <= 4'b1100;
+                            end
+                            3   :   begin
+                                {a43, a44} <= RDATA_I[63:48];
+                                {EN41, EN42, EN43, EN44} <= 4'b1100;
+                            end
+                        endcase
+
+                    end
+                    1: begin
+                        case (set_input_line)
+                            0   :   begin
+                                {a14} <= RDATA_I[63:56];
+                                {EN11, EN12, EN13, EN14} <= 4'b1110;
+                            end
+                            1   :   begin
+                                {a24} <= RDATA_I[63:56];
+                                {EN21, EN22, EN23, EN24} <= 4'b1110;
+                            end
+                            2   :   begin
+                                {a34} <= RDATA_I[63:56];
+                                {EN31, EN32, EN33, EN34} <= 4'b1110;
+                            end
+                            3   :   begin
+                                {a44} <= RDATA_I[63:56];
+                                {EN41, EN42, EN43, EN44} <= 4'b1110;
+                            end
+                        endcase
+
+                    end
+                endcase
+            end else if (N_flag == 1) begin
+                case (N_second)
+                    4: begin
+                        case (set_input_line)
+                            0   :   begin
+                                {a11, a12, a13, a14} <= RDATA_I[31:0];
+                                {EN11, EN12, EN13, EN14} <= 4'b0000;
+                            end
+                            1   :   begin
+                                {a21, a22, a23, a24} <= RDATA_I[31:0];
+                                {EN21, EN22, EN23, EN24} <= 4'b0000;
+                            end
+                            2   :   begin
+                                {a31, a32, a33, a34} <= RDATA_I[31:0];
+                                {EN31, EN32, EN33, EN34} <= 4'b0000;
+                            end
+                            3   :   begin
+                                {a41, a42, a43, a44} <= RDATA_I[31:0];
+                                {EN41, EN42, EN43, EN44} <= 4'b0000;
+                            end
+                        endcase
+
+                    end
+                    3: begin
+                        case (set_input_line)
+                            0   :   begin
+                                {a12, a13, a14} <= RDATA_I[31:8];
+                                {EN11, EN12, EN13, EN14} <= 4'b1000;
+                            end
+                            1   :   begin
+                                {a22, a23, a24} <= RDATA_I[31:8];
+                                {EN21, EN22, EN23, EN24} <= 4'b1000;
+                            end 
+                            2   :   begin
+                                {a32, a33, a34} <= RDATA_I[31:8];
+                                {EN31, EN32, EN33, EN34} <= 4'b1000;
+                            end
+                            3   :   begin
+                                {a42, a43, a44} <= RDATA_I[31:8];
+                                {EN41, EN42, EN43, EN44} <= 4'b1000;
+                            end
+                        endcase
+
+                    end
+                    2: begin
+                        case (set_input_line)
+                            0   :   begin
+                                {a13, a14} <= RDATA_I[31:16];
+                                {EN11, EN12, EN13, EN14} <= 4'b1100;
+                            end
+                            1   :   begin
+                                {a23, a24} <= RDATA_I[31:16];
+                                {EN21, EN22, EN23, EN24} <= 4'b1100;
+                            end
+                            2   :   begin
+                                {a33, a34} <= RDATA_I[31:16];
+                                {EN31, EN32, EN33, EN34} <= 4'b1100;
+                            end
+                            3   :   begin
+                                {a43, a44} <= RDATA_I[31:16];
+                                {EN41, EN42, EN43, EN44} <= 4'b1100;
+                            end
+                        endcase
+
+                    end
+                    1: begin
+                        case (set_input_line)
+                            0   :   begin
+                                {a14} <= RDATA_I[31:24];
+                                {EN11, EN12, EN13, EN14} <= 4'b1110;
+                            end
+                            1   :   begin
+                                {a24} <= RDATA_I[31:24];
+                                {EN21, EN22, EN23, EN24} <= 4'b1110;
+                            end
+                            2   :   begin
+                                {a34} <= RDATA_I[31:24];
+                                {EN31, EN32, EN33, EN34} <= 4'b1110;
+                            end
+                            3   :   begin
+                                {a44} <= RDATA_I[31:24];
+                                {EN41, EN42, EN43, EN44} <= 4'b1110;
+                            end
+                        endcase
+
+                    end
+                endcase
+
+            end
+        end
+    end
+
+/*
             case (N_first)
                 4: begin
                     case (set_input_line)
@@ -215,8 +401,8 @@ module macarray (
                     EN_cal_col <= {4'b1110};
                 end
             endcase
-        end
-    end
+*/
+
 
 
 
