@@ -109,32 +109,92 @@ always @(posedge CLK or negedge RSTN)begin
 
 	case(n_value>=4,t_value>=4);
 	
-2'b00:begin //N<4,T<4    
-	if(row<n_value &&col<4) begin
-	result_matrix[row*4+col] <= result_matrix[row*4+col]+wgt_matrix[row*4+col]*inp_matrix[col];
+//case classification for N and T values
+  always @(posedge CLK or negedge RSTN)begin
+	if(!RSTN) begin
+	count<=0	
+     end else begin
+	case(n_values>4,t_values>4);
 	
-2'b01// N<4,T>=4
-	if (row < n_value && col < 4) begin
-                    result_matrix[row * 4 + col] <= 
-                        result_matrix[row * 4 + col] + 
-                        wgt_matrix[row * 4 + col] * inp_matrix[col];
-                end
-            end
-            2'b10: begin // N >= 4, T < 4
-                if (row < 4 && col < t_value) begin
-                    result_matrix[row * t_value + col] <= 
-                        result_matrix[row * t_value + col] + 
-                        wgt_matrix[row * t_value + col] * inp_matrix[col];
-                end
-            end
-            2'b11: begin // N >= 4, T >= 4
+2'b00: begin // N < 5, T < 5 (basic)
                 if (row < 4 && col < 4) begin
-                    result_matrix[row * 4 + col] <= 
-                        result_matrix[row * 4 + col] + 
-                        wgt_matrix[row * 4 + col] * inp_matrix[col];
-                end
-            end
-        endcase
-	
+                    result_matrix[4 * row + col] <= 
+                        (col > 0) ? result_matrix[4 * row + col - 1] + 
+                        wgt_matrix[col] * inp_matrix[4 * row + col] : 
+                        wgt_matrix[col] * inp_matrix[4 * row + col];
 
+
+2'b01: begin // N < 5, T >= 5
+    if (row < 4 && col < 4) begin
+                  // ?? ?? ? ?? ? ??
+      result_matrix[4 * row + col] <= 
+            (col > 0) ? result_matrix[4 * row + col - 1] + 
+                     wgt_matrix[col] * inp_matrix[4 * row + col] : 
+                        wgt_matrix[col] * inp_matrix[4 * row + col];
+                end
+
+                // ??? ? ?? ??
+                if (t_value >= 5) begin
+                    // 5?? ? ??
+                    if (count == 16) begin
+                        result_matrix[16] <= wgt_matrix[0] * inp_matrix[16];
+                    end else if (count > 16 && count < 20) begin
+                        result_matrix[count] <= 
+                            result_matrix[count - 1] + wgt_matrix[count - 16] * inp_matrix[count];
+                    end
+
+                    // 6?? ? ??
+                    if (t_value >= 6 && count == 20) begin
+                        result_matrix[20] <= wgt_matrix[0] * inp_matrix[20];
+                    end else if (count > 20 && count < 24) begin
+                        result_matrix[count] <= 
+                            result_matrix[count - 1] + wgt_matrix[count - 20] * inp_matrix[count];
+                    end
+
+                    // 7?? ? ??
+                    if (t_value >= 7 && count == 24) begin
+                        result_matrix[24] <= wgt_matrix[0] * inp_matrix[24];
+                    end else if (count > 24 && count < 28) begin
+                        result_matrix[count] <= 
+                            result_matrix[count - 1] + wgt_matrix[count - 24] * inp_matrix[count];
+                    end
+
+                    // 8?? ? ??
+                    if (t_value >= 8 && count == 28) begin
+                        result_matrix[28] <= wgt_matrix[0] * inp_matrix[28];
+                    end else if (count > 28 && count < 32) begin
+                        result_matrix[count] <= 
+                            result_matrix[count - 1] + wgt_matrix[count - 28] * inp_matrix[count];
+                    end
+                end
+
+2'b10: begin // N >= 5, T < 5 (col over)
+                if (row < 4 && col < 4) begin
+                   
+                    if ((n_value == 5 && col == 3) ||  // block 1 use
+                        (n_value == 6 && col >= 2) ||  // 2 use
+                        (n_value == 7 && col >= 1) ||  // 3 use
+                        (n_value == 8)) begin          // 4 yse 
+                        // 
+                        result_matrix[4 * row + col] <= 
+                            result_matrix[4 * row + col] + 
+                            wgt_matrix[col] * inp_matrix[4 * row + col];
+                    end else begin
+                        // 
+                        result_matrix[4 * row + col] <= result_matrix[4 * row + col];
+                    end
+                end
+
+                // ??? ? ?? (16?? ???? ??)
+                if (n_value > 4 && col >= 4 - (n_value - 4)) begin
+                    // ??? ? ???? ?? ??
+                    result_matrix[16 + col - (4 - (n_value - 4))] <= 
+                        result_matrix[16 + col - (4 - (n_value - 4))] + 
+                        wgt_matrix[col] * inp_matrix[4 * row + (n_value - 4)];
+                end
+:
+
+2'b11
+
+if(enable)
 endmodule
