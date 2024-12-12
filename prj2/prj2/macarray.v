@@ -97,53 +97,28 @@ end
 	
 	
     // WRITE YOUR MAC_ARRAY DATAPATH CODE
-always @(posedge CLK or negedge RSTN)begin
-	if(!RSTN)begin
-	row<=0;
-	col<=0;
-	count <=0;
-	result_matrix[0]<=0;
-     end else begin
-	row<= count/t_value;
-	col<= count%4;
 
-	case(n_value>=4,t_value>=4);
+
 	
-2'b00:begin //N<4,T<4    
-	if(row<n_value &&col<4) begin
-	result_matrix[row*4+col] <= result_matrix[row*4+col]+wgt_matrix[row*4+col]*inp_matrix[col];
-	
-2'b01// N<4,T>=4
-	if (row < n_value && col < 4) begin
-                    result_matrix[row * 4 + col] <= 
-                        result_matrix[row * 4 + col] + 
-                        wgt_matrix[row * 4 + col] * inp_matrix[col];
-                end
-            end
-            2'b10: begin // N >= 4, T < 4
-                if (row < 4 && col < t_value) begin
-                    result_matrix[row * t_value + col] <= 
-                        result_matrix[row * t_value + col] + 
-                        wgt_matrix[row * t_value + col] * inp_matrix[col];
-                end
-            end
-            2'b11: begin // N >= 4, T >= 4
-                if (row < 4 && col < 4) begin
-                    result_matrix[row * 4 + col] <= 
-                        result_matrix[row * 4 + col] + 
-                        wgt_matrix[row * 4 + col] * inp_matrix[col];
-                end
-            end
-        endcase
 //case classification for N and T values
   always @(posedge CLK or negedge RSTN)begin
 	if(!RSTN) begin
+	row<=0;
+	col<=0;
+
 	count<=0	
      end else begin
 	case(n_values>4,t_values>4);
 	
-2'b00:begin //N<5,T<5
-    if(row<4,col<4) begin
+
+2'b00: begin // N < 5, T < 5 (basic)
+                if (row < 4 && col < 4) begin
+                    result_matrix[4 * row + col] <= 
+                        (col > 0) ? result_matrix[4 * row + col - 1] + 
+                        wgt_matrix[col] * inp_matrix[4 * row + col] : 
+                        wgt_matrix[col] * inp_matrix[4 * row + col];
+
+
 
 
 2'b01: begin // N < 5, T >= 5
