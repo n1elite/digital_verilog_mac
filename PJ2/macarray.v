@@ -71,8 +71,8 @@ module macarray (
     reg N_flag;
     reg T_flag;
     reg M_flag;
-    reg [2:0] cal_count;
-    reg cal_fin;
+    reg [2:0] cal_count, cal_count2;
+    reg cal_fin, cal_fin2;
 
     reg stop_flag, stop_flag2;
 
@@ -157,7 +157,9 @@ module macarray (
             T_flag <= 0;
             M_flag <= 0;
             cal_count <= 0;
+	    cal_count2 <= 0;
             cal_fin <= 0;
+            cal_fin2 <= 0;
 
             stop_flag <= 0;
 	    stop_flag2 <= 0;
@@ -316,20 +318,56 @@ module macarray (
 			EN_W_read <= 0;
 		case(cal_case)
 			0 : begin
+				 if (cal_fin2 == 0) begin
+                       			 cal_count2 <= cal_count2 + 1;
+                        		if (cal_count + 1 == M) begin
+                            			stop_flag2 <= 1;
+                            			cal_fin2 <= 1;
+                        		end
+                        		read_weight_line <=  read_weight_line + 1;
+                 		 end
 			end
-			0 : begin
+			1 : begin
+				  if (cal_fin2 == 0) begin
+                  			cal_count2 <= cal_count2 + 1;
+                    			if (cal_count2 + 1 == M) begin
+                        			stop_flag2 <= 1;
+                        			cal_fin2 <= 1;
+                    			end
+                    			read_weight_line <=  read_weight_line + 1;
+                    		  end
 			end
-			0 : begin
+			2 : begin
+				 if (cal_fin2 == 0) begin
+                  			cal_count2 <= cal_count2 + 1;
+                    			if (cal_count2 + 1 == M) begin
+                        			stop_flag2 <= 1;
+                        			cal_fin2 <= 1;
+                    			end
+                    			read_weight_line <=  read_weight_line + 1;
+                    		  end
 			end
-			0 : begin
+			3 : begin
+				if(cal_fin2 == 0) begin
+					cal_count2 <= cal_count + 1;
+					read_weight_line <= read_weight_line + 1;
+					if(cal_count2 == 3 && M_flag == 0) begin
+						read_weight_line <= 0; M_flag <= 1;
+					end else if(cal_count2 == 3 && M_flag == 0)
+						M_flag <= 0;
+					else if(cal_count2 + 1== M)
+						stop_flag2 <= 1;
+					else if (cal_count2 == 7 && M_flag == 0)
+						
+				end
 			end
-			0 : begin
+			4 : begin
 			end
-			0 : begin
+			5 : begin
 			end
-			0 : begin
+			6 : begin
 			end
-			0 : begin
+			7 : begin
 			end	
 		endcase	
 	end
