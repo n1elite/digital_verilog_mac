@@ -68,7 +68,8 @@ module macarray (
 
     reg N_flag;
     reg T_flag;
-    reg [2:0] T_count;
+    reg W_flag;
+    reg [2:0] cal_count;
 
     reg stop_flag;
 
@@ -91,7 +92,7 @@ module macarray (
     assign cal_case =   (N < 5) ? ((T < 5) ? ((M < 5) ? 0 : 1) : ((M < 5) ? 2 : 3)) : ((T < 5) ? ((M < 5) ? 4 : 5) : ((M < 5) ? 6 : 7));
                                              
     assign ADDR_I   =   read_input_line;
-    assign EN_I     =   START & EN_I_read;
+    assign EN_I     =   START & ((read_input_line != 0) ? EN_I_read : 1);
 
 
 
@@ -140,7 +141,8 @@ module macarray (
 
             N_flag <= 0;
             T_flag <= 0;
-            T_count <= 0;
+            W_flag <= 0;
+            cal_count <= 0;
 
             stop_flag <= 0;
 
@@ -170,50 +172,142 @@ module macarray (
             end
             case (cal_case)
                 0: begin 
-                    if (read_input_line + 1 == T) begin
-                        stop_flag <= 1;
-                    end else begin
+                    if(stop_flag == 0) begin
                         read_input_line <=  read_input_line + 1;
+                        if (read_input_line + 1 == T) begin
+                            stop_flag <= 1;
+                        end else begin
+                        end
                     end
                 end
                 1: begin
-                    if (read_input_line + 1 == T) begin
-                        stop_flag <= 1;
-                    end else begin
+                    if(stop_flag == 0) begin
                         read_input_line <=  read_input_line + 1;
+                        if (read_input_line + 1 == T) begin
+                            stop_flag <= 1;
+                        end else begin
+                        end
                     end
                 end
                 2: begin
-                    if (read_input_line + 1 == T) begin
-                        stop_flag <= 1;
-                    end else begin
+                    if(stop_flag == 0) begin
                         read_input_line <=  read_input_line + 1;
+                        if (read_input_line + 1 == T) begin
+                            stop_flag <= 1;
+                        end else begin
+                        end
                     end
                 end
                 3: begin
-                    if (read_input_line + 1 == T) begin
-                        if (T_count == 7 && T_flag == 0) begin
-                            read_input_line <= 0;
-                            T_flag <= 1;
-                            stop_flag <= 0;
-                            EN_I_read <= 0;
-                        end else begin
-                            stop_flag <= 1;
-                        end
-                    end else begin
+                    cal_count <= cal_count + 1;
+                    if(stop_flag == 0) begin
                         read_input_line <=  read_input_line + 1;
+                        if (read_input_line + 1 == T) begin
+                            stop_flag <= 1;
+                        end else begin
+                        end
                     end
-                    T_count <= T_count + 1;
-                    if (T_count == 7 && T_flag == 0) begin
+                    if (cal_count == 7 && T_flag == 0) begin
                         read_input_line <= 0;
                         T_flag <= 1;
+                        stop_flag <= 0;
+                        EN_I_read <= 1;
+                    end else begin
                     end
                 end
                 4: begin
+                    if(cal_count == 7 && N_flag == 1) begin
+                    end else begin
+                        cal_count <= cal_count + 1;
+                    end
+                    if(stop_flag == 0) begin
+                        read_input_line <=  read_input_line + 1;
+                        if (read_input_line + 1 == T  && cal_count !=3) begin
+                            stop_flag <= 1;
+                        end else begin
+                        end
+                    end
+                    if (cal_count == 3)begin
+                        read_input_line <= 0;
+                        stop_flag <= 0;
+                        EN_I_read <= 1;
+                    end else if (cal_count == 4) begin
+                        N_flag <= 1;
+                    end
                 end
                 5: begin
+                    if(cal_count == 7 && N_flag == 1 && W_flag == 1) begin
+                    end else begin
+                        cal_count <= cal_count + 1;
+                    end
+                    if(stop_flag == 0) begin
+                        read_input_line <=  read_input_line + 1;
+                        if(read_input_line + 1 == T && (cal_count !=3 || cal_count !=7)) begin
+                            stop_flag <= 1;
+                        end else begin
+                        end
+                    end
+                    if(W_flag == 0) begin
+                        if (cal_count == 3)begin
+                            read_input_line <= 0;
+                            stop_flag <= 0;
+                            EN_I_read <= 1;
+                        end else if (cal_count == 4) begin
+                            N_flag <= 1;
+                        end else if (cal_count == 7) begin
+                            read_input_line <= 0;
+                            stop_flag <= 0;
+                            EN_I_read <= 1;
+                            W_flag <= 1;
+                        end
+                    end else begin
+                        if (cal_count == 0)begin
+                            N_flag <= 0;
+                        end else if (cal_count == 3) begin
+                            read_input_line <= 0;
+                            stop_flag <= 0;
+                            EN_I_read <= 1;
+                        end else if (cal_count == 4) begin
+                            N_flag <= 1;
+                        end
+                    end
                 end
                 6: begin
+                    if(cal_count == 7 && N_flag == 1 && T_flag == 1) begin
+                    end else begin
+                        cal_count <= cal_count + 1;
+                    end
+                    if(stop_flag == 0) begin
+                        read_input_line <= read_input_line + 1;
+                        if(read_input_line + 1 == T && (cal_count !=3 || cal_count !=7)) begin
+                            stop_flag <= 1;
+                        end else begin
+                        end
+                    end
+
+
+                    if(T_flag == 0) begin
+                        if(cal_count == 3) begin
+                            read_input_line <= 0;
+                        end else if (cal_count == 4) begin
+                            N_flag <= 1;
+                        end else if (cal_count == 7) begin
+                            read_input_line <= 4;
+                            T_flag <= 1;
+                        end
+                    end else begin
+                        if (cal_count == 0)begin
+                            N_flag <= 0;
+                        end else if (cal_count == 3) begin
+                            read_input_line <= 4;
+                            
+                        end else if (cal_count == 4) begin
+                            N_flag <= 1;
+                            stop_flag <= 0;
+                            EN_I_read <= 1;
+                        end
+                    end
+
                 end
                 7: begin
                 end
@@ -225,7 +319,7 @@ module macarray (
 
 
 
-//여기서 들어가는 라인 설정 및
+//나중에 case문 지워도 됨
 
     always @(posedge CLK or negedge RSTN) begin
         if(control_start == 1) begin
@@ -243,12 +337,16 @@ module macarray (
                     set_input_line  <=  set_input_line  + 1;
                 end
                 4: begin
+                    set_input_line  <=  set_input_line  + 1;
                 end
                 5: begin
+                    set_input_line  <=  set_input_line  + 1;
                 end
                 6: begin
+                    set_input_line  <=  set_input_line  + 1;
                 end
                 7: begin
+                    set_input_line  <=  set_input_line  + 1;
                 end
             endcase
         end
@@ -595,246 +693,6 @@ module macarray (
             end
         end
     end
-
-/*
-            case (N_first)
-                4: begin
-                    case (set_input_line)
-                        0   :   begin
-                            {a11, a12, a13, a14} <= RDATA_I[63:32]
-                        end
-                        1   :   begin
-                            {a21, a22, a23, a24} <= RDATA_I[63:32]
-                        end
-                        2   :   begin
-                            {a31, a32, a33, a34} <= RDATA_I[63:32]
-                        end
-                        3   :   begin
-                            {a41, a42, a43, a44} <= RDATA_I[63:32]
-                        end
-                    endcase
-
-                    EN_cal_col <= {4'b0000};
-                end
-                3: begin
-                    case (set_input_line)
-                        0   :   begin
-                            {a12, a13, a14} <= RDATA_I[63:40]
-                        end
-                        1   :   begin
-                            {a22, a23, a24} <= RDATA_I[63:40]
-                        end 
-                        2   :   begin
-                            {a32, a33, a34} <= RDATA_I[63:40]
-                        end
-                        3   :   begin
-                            {a42, a43, a44} <= RDATA_I[63:40]
-                                end
-                    endcase
-
-                    EN_cal_col <= {4'b1000};
-                end
-                2: begin
-                    case (set_input_line)
-                        0   :   begin
-                            {a13, a14} <= RDATA_I[63:48]
-                        end
-                        1   :   begin
-                            {a23, a24} <= RDATA_I[63:48]
-                        end
-                        2   :   begin
-                            {a33, a34} <= RDATA_I[63:48]
-                        end
-                        3   :   begin
-                            {a43, a44} <= RDATA_I[63:48]
-                        end
-                    endcase
-
-                    EN_cal_col <= {4'b1100};
-                end
-                1: begin
-                    case (set_input_line)
-                        0   :   begin
-                            {a14} <= RDATA_I[63:56]
-                        end
-                        1   :   begin
-                            {a24} <= RDATA_I[63:56]
-                        end
-                        2   :   begin
-                            {a34} <= RDATA_I[63:56]
-                        end
-                        3   :   begin
-                            {a44} <= RDATA_I[63:56]
-                        end
-                    endcase
-
-                    EN_cal_col <= {4'b1110};
-                end
-            endcase
-*/
-
-
-
-
-/*
-                    case (N_first)
-                        4: begin
-                            case (set_input_line)
-                                0   :   begin
-                                    {a11, a12, a13, a14} <= RDATA_I[63:32]
-                                end
-                                1   :   begin
-                                    {a21, a22, a23, a24} <= RDATA_I[63:32]
-                                end
-                                2   :   begin
-                                    {a31, a32, a33, a34} <= RDATA_I[63:32]
-                                end
-                                3   :   begin
-                                    {a41, a42, a43, a44} <= RDATA_I[63:32]
-                                end
-                            endcase
-
-                            EN_cal_col <= {4'b0000};
-                        end
-                        3: begin
-                            case (set_input_line)
-                                0   :   begin
-                                    {a12, a13, a14} <= RDATA_I[63:40]
-                                end
-                                1   :   begin
-                                    {a22, a23, a24} <= RDATA_I[63:40]
-                                end
-                                2   :   begin
-                                    {a32, a33, a34} <= RDATA_I[63:40]
-                                end
-                                3   :   begin
-                                    {a42, a43, a44} <= RDATA_I[63:40]
-                                end
-                            endcase
-
-                            EN_cal_col <= {4'b1000};
-                        end
-                        2: begin
-                            case (set_input_line)
-                                0   :   begin
-                                    {a13, a14} <= RDATA_I[63:48]
-                                end
-                                1   :   begin
-                                    {a23, a24} <= RDATA_I[63:48]
-                                end
-                                2   :   begin
-                                    {a33, a34} <= RDATA_I[63:48]
-                                end
-                                3   :   begin
-                                    {a43, a44} <= RDATA_I[63:48]
-                                end
-                            endcase
-
-                            EN_cal_col <= {4'b1100};
-                        end
-                        1: begin
-                            case (set_input_line)
-                                0   :   begin
-                                    {a14} <= RDATA_I[63:56]
-                                end
-                                1   :   begin
-                                    {a24} <= RDATA_I[63:56]
-                                end
-                                2   :   begin
-                                    {a34} <= RDATA_I[63:56]
-                                end
-                                3   :   begin
-                                    {a44} <= RDATA_I[63:56]
-                                end
-                            endcase
-
-                            EN_cal_col <= {4'b1110};
-                        end
-                    endcase
-*/
-
-
-
-
-
-/*
-    always @(posedge CLK or negedge RSTN) begin
-        if(START == 1) begin
-            case (N_second)
-                4   :   begin
-
-                end
-
-                3   :   begin
-
-                end
-
-                2   :   begin
-
-                end
-
-                1   :   begin
-
-                end
-
-                0   :   begin
-                    case (N_first)
-                        4   :   begin
-                            case (set_input_line)
-                                0   :   begin
-                                    {a11, a12, a13, a14} <= RDATA_I[63:32]
-                                end
-                                1   :   begin
-                                    {a21, a22, a23, a24} <= RDATA_I[63:32]
-                                end
-                                2   :   begin
-                                    {a31, a32, a33, a34} <= RDATA_I[63:32]
-                                end
-                                3   :   begin
-                                    {a41, a42, a43, a44} <= RDATA_I[63:32]
-                                end
-                            endcase
-
-                            EN_cal_col <= {4'b0000};
-                        end
-                        3   :   begin
-                            case (set_input_line)
-                                0   :   begin
-                                    {a12, a13, a14} <= RDATA_I[63:40]
-                                end
-                                1   :   begin
-                                    {a22, a23, a24} <= RDATA_I[63:40]
-                                end
-                                2   :   begin
-                                    {a32, a33, a34} <= RDATA_I[63:40]
-                                end
-                                3   :   begin
-                                    {a42, a43, a44} <= RDATA_I[63:40]
-                                end
-                            endcase
-
-                            EN_cal_col <= {4'b1000};
-                        end
-
-                        2   :   begin
-
-                        end
-
-                        1   :   begin
-
-                        end
-                    endcase
-                end
-            endcase
-        end
-    end
-*/
-
-
-
-
-
-
 
 
 
