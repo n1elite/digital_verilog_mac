@@ -10,28 +10,28 @@ z2
 cModel Technology
 dC:/intelFPGA_lite/20.1
 vmacarray
-Z0 !s110 1734178725
+Z0 !s110 1734183817
 !i10b 1
-!s100 Cm]DNcm9Jm<47YeA[i[ad3
+!s100 VMcA@FSa@dlUYb0z^mg]X3
 Z1 !s11b Dg1SIo80bB@j0V0VzS_@n1
-IaznR?=8JTQBA?Vl`OLn@I3
+IOCCTzh<5nP=mER[n:JZ;<1
 Z2 VDg1SIo80bB@j0V0VzS_@n1
 Z3 dC:/2014104049/prj2 (2)/PJ2
-w1734178701
+w1734183814
 8C:/2014104049/prj2 (2)/PJ2/macarray.v
 FC:/2014104049/prj2 (2)/PJ2/macarray.v
-!i122 40
-L0 13 1035
+!i122 52
+L0 13 1103
 Z4 OV;L;2020.1;71
 r1
 !s85 0
 31
-Z5 !s108 1734178725.000000
+!s108 1734183816.000000
 !s107 C:/2014104049/prj2 (2)/PJ2/macarray.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/2014104049/prj2 (2)/PJ2/macarray.v|
 !i113 1
-Z6 o-work work
-Z7 tCvgOpt 0
+Z5 o-work work
+Z6 tCvgOpt 0
 vSRAM
 R0
 !i10b 1
@@ -40,42 +40,42 @@ R1
 IN4W`zWa0I_W[eFOmkH7P31
 R2
 R3
-Z8 w1734165389
+w1734165389
 8C:/2014104049/prj2 (2)/PJ2/model.v
 FC:/2014104049/prj2 (2)/PJ2/model.v
-!i122 41
+!i122 53
 L0 24 31
 R4
 r1
 !s85 0
 31
-R5
+Z7 !s108 1734183817.000000
 !s107 C:/2014104049/prj2 (2)/PJ2/model.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/2014104049/prj2 (2)/PJ2/model.v|
 !i113 1
+R5
 R6
-R7
 n@s@r@a@m
 vtestbench
 R0
 !i10b 1
-!s100 Oc:FDZ^kc>O8f6J>?4AW]1
+!s100 ah95Do11_5eje5boFb7iF2
 R1
-IboRVi>c_DX@Nf]Gk8Sjz:1
+IQdaDYagTEXFI>J<f43d:62
 R2
 R3
-R8
+w1734183767
 8C:/2014104049/prj2 (2)/PJ2/testbench.v
 FC:/2014104049/prj2 (2)/PJ2/testbench.v
-!i122 42
+!i122 54
 L0 11 133
 R4
 r1
 !s85 0
 31
-R5
+R7
 !s107 C:/2014104049/prj2 (2)/PJ2/testbench.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/2014104049/prj2 (2)/PJ2/testbench.v|
 !i113 1
+R5
 R6
-R7

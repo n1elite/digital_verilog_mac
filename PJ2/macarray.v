@@ -68,11 +68,13 @@ module macarray (
     reg [1:0] set_weight_line;
 
 
-    reg N_flag;
+    reg N_flag, N_flag2;
     reg T_flag;
     reg M_flag;
+    reg my_falg;
     reg [2:0] cal_count, cal_count2;
     reg cal_fin, cal_fin2;
+    reg [3:0] six_count; 
 
     reg stop_flag, stop_flag2;
 
@@ -99,7 +101,7 @@ module macarray (
     assign ADDR_I   =   read_input_line;
     assign ADDR_W = read_weight_line;
     assign EN_I     =   START & (cal_fin == 1) ?  0  : (((read_input_line != 0) ? EN_I_read : 1));
-    assign EN_W = START & (cal_fin == 1) ? 0 : (((read_weight_line != 0) ? EN_W_read : 1));
+    assign EN_W = START & (cal_fin2 == 1) ? 0 : (((read_weight_line != 0) ? EN_W_read : 1));
 
 
 
@@ -154,12 +156,15 @@ module macarray (
 	    set_weight_line <= 0;
 
             N_flag <= 0;
+	    N_flag2 <= 0;
             T_flag <= 0;
             M_flag <= 0;
+	    my_flag <= 0;
             cal_count <= 0;
 	    cal_count2 <= 0;
             cal_fin <= 0;
             cal_fin2 <= 0;
+	    six_count <= 0;
 
             stop_flag <= 0;
 	    stop_flag2 <= 0;
@@ -328,7 +333,7 @@ module macarray (
                  		 end
 			end
 			1 : begin
-				  if (cal_fin2 == 0) begin
+				 if (cal_fin2 == 0) begin
                   			cal_count2 <= cal_count2 + 1;
                     			if (cal_count2 + 1 == M) begin
                         			stop_flag2 <= 1;
@@ -340,34 +345,93 @@ module macarray (
 			2 : begin
 				 if (cal_fin2 == 0) begin
                   			cal_count2 <= cal_count2 + 1;
-                    			if (cal_count2 + 1 == M) begin
+					read_weight_line <=  read_weight_line + 1;
+                    			if (cal_count2 + 1 == M && M<4) begin
                         			stop_flag2 <= 1;
-                        			cal_fin2 <= 1;
-                    			end
-                    			read_weight_line <=  read_weight_line + 1;
+                    			else if (cal_count2 == 3 && M_flag == 0) begin
+						stop_flag2 <= 0; M_flag <= 1;
+					end else if(cal_count2 == 3 && M_flag == 1) begin
+						cal_fin2 <= 1;
+					end
                     		  end
 			end
 			3 : begin
 				if(cal_fin2 == 0) begin
-					cal_count2 <= cal_count + 1;
+					cal_count2 <= cal_count2 + 1;
 					read_weight_line <= read_weight_line + 1;
 					if(cal_count2 == 3 && M_flag == 0) begin
 						read_weight_line <= 0; M_flag <= 1;
-					end else if(cal_count2 == 3 && M_flag == 0)
+					end else if(cal_count2 == 3 && M_flag == 1)
 						M_flag <= 0;
-					else if(cal_count2 + 1== M)
+					else if(cal_count2 + 1== M && M<8)
 						stop_flag2 <= 1;
-					else if (cal_count2 == 7 && M_flag == 0)
-						
+					else if (cal_count2 == 7 && M_flag == 0) begin
+						stop_flag2 <= 0; read_weight_line <= 4; M_flag <= 1;
+					end else if(cal_count2 == 7 && M_flag == 1) begin
+						cal_fin2 <= 1;
+					end	
 				end
 			end
 			4 : begin
+				if(cal_fin2 == 0) begin
+					cal_count2 <= cal_count2 + 1;
+					read_weight_line <= read_weight_line + 1;
+					if(cal_count2 + 1 == M && M<4) begin
+						stop_flag2 <= 1;
+					end else if(cal_count2 == 3 && N_flag2 == 0) begin
+						stop_flag2 <= 0; read_weight_line <= 0; N_flag2 <= 1;
+					end else if(cal_count2 == 3 && N_flag2 == 1) begin
+						cal_fin2 <= 1;
+					end
+				end
 			end
 			5 : begin
+				if(cal_fin2 == 0) begin
+					cal_count2 <= cal_count2 + 1;
+					read_weight_line <= read_weight_line + 1;
+					if(cal_count2 + 1 == M && M<8) begin
+						stop_flag2 <= 1;
+					end else if (cal_count2 == 3 && N_flag2 == 0) begin
+						read_weight_line <= 0; N_flag2 <= 1;
+					end else if (cal_count2 == 3 && N_flag2 == 1) begin
+						N_flag2 <= 0;
+					end else if (cal_count2 == 7 && N_flag2 == 0) begin
+						stop_flag2 <= 0; read_weight_line <= 4; N_flag <= 1;
+					end else if (cal_count2 == 7 && N_flag2 == 1) begin
+						cal_fin2 <= 1;
+					end
+				end
 			end
 			6 : begin
+				if(cal_fin2 == 0) begin
+					cal_count2 <= cal_count2 + 1;
+					six_count <= six_count + 1;
+					read_weight_line <= read_weight_line + 1;
+					if(cal_count2 + 1 == M && M<4)
+						stop_flag2 <= 1;
+					else if(cal_count2 == 3 && (six_count == 3 | six_count == 6 | six_count == 9)) begin
+						stop_flag2 <= 0; read_weight_line <= 0;
+					end else if (cal_count2 == 3 && six_count == 12)
+						cal_fin2 <= 1;
+				end
 			end
 			7 : begin
+				if(cal_fin2 == 0) begin
+					cal_count2 <= cal_count2 + 1;
+					read_weight_line <= read_weight_line + 1;
+					if(cal_count2 + 1 == M && M<8)
+						stop_flag2 <= 1;
+					else if (cal_count2 == 7) 
+						stop_flag2 <= 0;
+					else if(cal_count2 == 3 && M_flag == 0) begin
+						read_weight_line <= 0; M_flag <= 1;
+					end else if(cal_count2 == 3 && M_flag == 1) begin
+						read_weight_line <= 4; N_flag2 <= 1; stop_flag2 <= 0;
+					end else if(cal_count2 == 3 && N_flag2 == 1) begin
+						read_weight_line <= 0; my_flag <= 1;
+					end else if(cal_count2 == 3 && my_flag == 1)
+						can_fin2 <= 1;
+				end
 			end	
 		endcase	
 	end
