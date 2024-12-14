@@ -68,8 +68,9 @@ module macarray (
 
     reg N_flag;
     reg T_flag;
-    reg W_flag;
+    reg M_flag;
     reg [2:0] cal_count;
+    reg cal_fin;
 
     reg stop_flag;
 
@@ -92,7 +93,8 @@ module macarray (
     assign cal_case =   (N < 5) ? ((T < 5) ? ((M < 5) ? 0 : 1) : ((M < 5) ? 2 : 3)) : ((T < 5) ? ((M < 5) ? 4 : 5) : ((M < 5) ? 6 : 7));
                                              
     assign ADDR_I   =   read_input_line;
-    assign EN_I     =   START & ((read_input_line != 0) ? EN_I_read : 1);
+    assign EN_I     =   START & (cal_fin == 1) ?  0  : (((read_input_line != 0) ? EN_I_read : 1));
+
 
 
 
@@ -140,8 +142,9 @@ module macarray (
 
             N_flag <= 0;
             T_flag <= 0;
-            W_flag <= 0;
+            M_flag <= 0;
             cal_count <= 0;
+            cal_fin <= 0;
 
             stop_flag <= 0;
 
@@ -171,214 +174,273 @@ module macarray (
             end
             case (cal_case)
                 0: begin 
-                    cal_count <= cal_count + 1;
-                    if (cal_count + 1 == T) begin
-                        stop_flag <= 1;
+                    if (cal_fin == 0) begin
+                        cal_count <= cal_count + 1;
+                        if (cal_count + 1 == T) begin
+                            stop_flag <= 1;
+                            cal_fin <= 1;
+                        end
+                        read_input_line <=  read_input_line + 1;
                     end
-                    read_input_line <=  read_input_line + 1;
                 end
                 1: begin
+                    if (cal_fin == 0) begin
                     cal_count <= cal_count + 1;
                     if (cal_count + 1 == T) begin
                         stop_flag <= 1;
+                        cal_fin <= 1;
                     end
                     read_input_line <=  read_input_line + 1;
+                    end
                 end
                 2: begin
-                    cal_count <= cal_count + 1;
-                    if (cal_count + 1 == T) begin
-                        stop_flag <= 1;
+                    if (cal_fin == 0) begin
+                        cal_count <= cal_count + 1;
+                        if (cal_count + 1 == T) begin
+                            stop_flag <= 1;
+                            cal_fin <= 1;
+                        end
+                        read_input_line <=  read_input_line + 1;
                     end
-                    read_input_line <=  read_input_line + 1;
-                    
                 end
                 3: begin
-                    cal_count <= cal_count + 1;
-                    if (cal_count + 1 == T) begin
-                        stop_flag <= 1;
-                    end
-                    if(T_flag == 0) begin
-                        if(cal_count == 7) begin
-                            stop_flag <= 0;
-                            T_flag <= 1;
+                    if (cal_fin == 0) begin
+                        cal_count <= cal_count + 1;
+                        if (cal_count + 1 == T) begin
+                            stop_flag <= 1;
                         end
+                        if(T_flag == 0) begin
+                            if(cal_count == 7) begin
+                                stop_flag <= 0;
+                                T_flag <= 1;
+                            end
+                        end else if (T_flag == 1) begin
+                            if(cal_count == 7) begin
+                                cal_fin <= 1;
+                            end
+                        end
+                        read_input_line <=  read_input_line + 1;
                     end
-                    read_input_line <=  read_input_line + 1;
                 end
                 4: begin
-                    cal_count <= cal_count + 1;
-                    if (cal_count + 1 == T || cal_count + 1 == T + 4) begin
-                        stop_flag <= 1;
-                    end
-                    if(N_flag == 0) begin
-                        if(cal_count == 3) begin
-                            stop_flag <= 0;
-                            read_input_line <= 0;
-                            N_flag <= 1;
-                        end else begin
-                            read_input_line <=  read_input_line + 1;
+                    if (cal_fin == 0) begin
+                        cal_count <= cal_count + 1;
+                        if (cal_count + 1 == T || cal_count + 1 == T + 4) begin
+                            stop_flag <= 1;
                         end
-                    end else if (N_flag == 1) begin
-                        read_input_line <= read_input_line + 1;
+                        if(N_flag == 0) begin
+                            if(cal_count == 3) begin
+                                stop_flag <= 0;
+                                read_input_line <= 0;
+                            end else if(cal_count == 4) begin
+                                N_flag <= 1;
+                                read_input_line <= read_input_line + 1;
+                            end else begin
+                                read_input_line <=  read_input_line + 1;
+                            end
+                        end else if (N_flag == 1) begin
+                            if(cal_count == 4)begin
+                                cal_fin <= 1;
+                            end
+                            read_input_line <= read_input_line + 1;
+                        end
                     end
                 end
                 5: begin
-                    cal_count <= cal_count + 1;
-                    if (cal_count + 1 == T || cal_count + 1 == T + 4) begin
-                        stop_flag <= 1;
-                    end
-                    if(W_flag == 0) begin
-                        if(N_flag == 0) begin
-                            if(cal_count == 3) begin
-                                stop_flag <= 0;
-                                read_input_line <= 0;
-                                N_flag <= 1;
-                            end else begin
-                                read_input_line <=  read_input_line + 1;
+                    if (cal_fin == 0) begin
+                        cal_count <= cal_count + 1;
+                        if (cal_count + 1 == T || cal_count + 1 == T + 4) begin
+                            stop_flag <= 1;
+                        end
+                        if(M_flag == 0) begin
+                            if(N_flag == 0) begin
+                                if(cal_count == 3) begin
+                                    stop_flag <= 0;
+                                    read_input_line <= 0;
+                                end else if(cal_count == 4) begin
+                                    N_flag <= 1;
+                                    read_input_line <= read_input_line + 1;
+                                end else begin
+                                    read_input_line <=  read_input_line + 1;
+                                end
+                            end else if (N_flag == 1) begin
+                                if(cal_count == 7)begin
+                                    stop_flag <= 0;
+                                    read_input_line <= 0;
+                                    M_flag <= 1;
+                                end else begin
+                                    read_input_line <= read_input_line + 1;
+                                end
                             end
-                        end else if (N_flag == 1) begin
-                            if(cal_count == 7)begin
-                                stop_flag <= 0;
-                                read_input_line <= 0;
-                                N_flag <= 0;
-                                W_flag <= 1;
-                            end else begin
+                        end else if (M_flag == 1) begin
+                            if(N_flag == 0) begin
+                                if(cal_count == 3) begin
+                                    stop_flag <= 0;
+                                    read_input_line <= 0;
+                                end else if(cal_count == 4) begin
+                                    N_flag <= 1;
+                                    read_input_line <= read_input_line + 1;
+                                end else begin
+                                    read_input_line <=  read_input_line + 1;
+                                end
+                            end else if (N_flag == 1) begin
+                                if(cal_count == 0) begin
+                                    N_flag <= 0;
+                                end else if (cal_count == 7) begin
+                                    cal_fin <= 1;
+                                end
                                 read_input_line <= read_input_line + 1;
                             end
-                        end
-                    end else if (W_flag == 1) begin
-                        if(N_flag == 0) begin
-                            if(cal_count == 3) begin
-                                stop_flag <= 0;
-                                read_input_line <= 0;
-                                N_flag <= 1;
-                            end else begin
-                                read_input_line <=  read_input_line + 1;
-                            end
-                        end else if (N_flag == 1) begin
-                            read_input_line <= read_input_line + 1;
                         end
                     end
                 end
                 6: begin
-                    cal_count <= cal_count + 1;
-                    if (T_flag == 1) begin
-                        if (cal_count + 1 == T || cal_count + 1 == T - 4) begin
-                        stop_flag <= 1;
-                        end
-                    end
-                    if(T_flag == 0) begin
-                        if(N_flag == 0) begin
-                            if(cal_count == 3) begin
-                                //stop_flag <= 0;
-                                read_input_line <= 0;
-                                N_flag <= 1;
-                            end else begin
-                                read_input_line <=  read_input_line + 1;
+                    if (cal_fin == 0) begin
+                        cal_count <= cal_count + 1;
+                        if (T_flag == 1) begin
+                            if (cal_count + 1 == T || cal_count + 1 == T - 4) begin
+                            stop_flag <= 1;
                             end
-                        end else if (N_flag == 1) begin
-                            if(cal_count == 7)begin
-                                //stop_flag <= 0;
-                                read_input_line <= 4;
-                                N_flag <= 0;
-                                T_flag <= 1;
-                            end else begin
+                        end
+                        if(T_flag == 0) begin
+                            if(N_flag == 0) begin
+                                if(cal_count == 3) begin
+                                    //stop_flag <= 0;
+                                    read_input_line <= 0;
+                                end else if(cal_count == 4) begin
+                                    N_flag <= 1;
+                                    read_input_line <= read_input_line + 1;
+                                end else begin
+                                    read_input_line <=  read_input_line + 1;
+                                end
+                            end else if (N_flag == 1) begin
+                                if(cal_count == 7)begin
+                                    //stop_flag <= 0;
+                                    read_input_line <= 4;
+                                    T_flag <= 1;
+                                end else begin
+                                    read_input_line <= read_input_line + 1;
+                                end
+                            end
+                        end else if (T_flag == 1) begin
+                            if(N_flag == 0) begin
+                                if(cal_count == 3) begin
+                                    stop_flag <= 0;
+                                    read_input_line <= 4;
+                                end else if(cal_count == 4) begin
+                                    N_flag <= 1;
+                                    read_input_line <= read_input_line + 1;
+                                end  else begin
+                                    read_input_line <=  read_input_line + 1;
+                                end
+                            end else if (N_flag == 1) begin
+                                if(cal_count == 0)begin
+                                    N_flag <= 0;
+                                end else if (cal_count == 7) begin
+                                    cal_fin <= 1;
+                                end
                                 read_input_line <= read_input_line + 1;
                             end
-                        end
-                    end else (T_flag == 1) begin
-                        if(N_flag == 0) begin
-                            if(cal_count == 3) begin
-                                stop_flag <= 0;
-                                read_input_line <= 4;
-                                N_flag <= 1;
-                            end else begin
-                                read_input_line <=  read_input_line + 1;
-                            end
-                        end else if (N_flag == 1) begin
-                            read_input_line <= read_input_line + 1;
                         end
                     end
                 end
                 7: begin
-                    cal_count <= cal_count + 1;
-                    if (T_flag == 1) begin
-                        if (cal_count + 1 == T || cal_count + 1 == T - 4) begin
-                        stop_flag <= 1;
-                        end
-                    end
-                    if (W_flag == 0) begin
-                        if(T_flag == 0) begin
-                            if(N_flag == 0) begin
-                                if(cal_count == 3) begin
-                                    //stop_flag <= 0;
-                                    read_input_line <= 0;
-                                    N_flag <= 1;
-                                end else begin
-                                    read_input_line <=  read_input_line + 1;
-                                end
-                            end else if(N_flag == 1) begin
-                                if(cal_count == 7)begin
-                                    //stop_flag <= 0;
-                                    read_input_line <= 4;
-                                    N_flag <= 0;
-                                    T_flag <= 1;
-                                end else begin
-                                    read_input_line <= read_input_line + 1;
-                                end
-                            end
-                        end else if (T_flag == 1) begin
-                            if(N_flag == 0) begin
-                                if(cal_count == 3) begin
-                                    stop_flag <= 0;
-                                    read_input_line <= 4;
-                                    N_flag <= 1;
-                                end else begin
-                                    read_input_line <=  read_input_line + 1;
-                                end
-                            end else if(N_flag == 1) begin
-                                if(cal_count == 7)begin
-                                    stop_flag <= 0;
-                                    read_input_line <= 0;
-                                    N_flag <= 0;
-                                    T_flag <= 0;
-                                    W_flag <= 1;
-                                end else begin
-                                    read_input_line <= read_input_line + 1;
-                                end
+                    if (cal_fin == 0) begin
+                        cal_count <= cal_count + 1;
+                        if (T_flag == 1) begin
+                            if (cal_count + 1 == T || cal_count + 1 == T - 4) begin
+                            stop_flag <= 1;
                             end
                         end
-                    end else if (W_flag == 1) begin
-                        if(T_flag == 0) begin
-                            if(N_flag == 0) begin
-                                if(cal_count == 3) begin
-                                    //stop_flag <= 0;
-                                    read_input_line <= 0;
-                                    N_flag <= 1;
-                                end else begin
-                                    read_input_line <=  read_input_line + 1;
+                        if (M_flag == 0) begin
+                            if(T_flag == 0) begin
+                                if(N_flag == 0) begin
+                                    if(cal_count == 3) begin
+                                        //stop_flag <= 0;
+                                        read_input_line <= 0;
+                                    end else if(cal_count == 4) begin
+                                        N_flag <= 1;
+                                        read_input_line <= read_input_line + 1;
+                                    end else begin
+                                        read_input_line <=  read_input_line + 1;
+                                    end
+                                end else if(N_flag == 1) begin
+                                    if(cal_count == 7)begin
+                                        //stop_flag <= 0;
+                                        read_input_line <= 4;
+                                        T_flag <= 1;
+                                    end else begin
+                                        read_input_line <= read_input_line + 1;
+                                    end
                                 end
-                            end else if(N_flag == 1) begin
-                                if(cal_count == 7)begin
-                                    //stop_flag <= 0;
-                                    read_input_line <= 4;
-                                    N_flag <= 0;
-                                    T_flag <= 1;
-                                end else begin
-                                    read_input_line <= read_input_line + 1;
+                            end else if (T_flag == 1) begin
+                                if(N_flag == 0) begin
+                                    if(cal_count == 3) begin
+                                        stop_flag <= 0;
+                                        read_input_line <= 4;
+                                    end else if(cal_count == 4) begin
+                                        N_flag <= 1;
+                                        read_input_line <= read_input_line + 1;
+                                    end  else begin
+                                        read_input_line <=  read_input_line + 1;
+                                    end
+                                end else if(N_flag == 1) begin
+                                    if(cal_count == 0)begin
+                                        N_flag <= 0;
+                                        read_input_line <= read_input_line + 1;
+                                    end else if(cal_count == 7)begin
+                                        stop_flag <= 0;
+                                        read_input_line <= 0;
+                                        T_flag <= 0;
+                                        M_flag <= 1;
+                                    end else begin
+                                        read_input_line <= read_input_line + 1;
+                                    end
                                 end
                             end
-                        end else if (T_flag == 1) begin
-                            if(N_flag == 0) begin
-                                if(cal_count == 3) begin
-                                    stop_flag <= 0;
-                                    read_input_line <= 4;
-                                    N_flag <= 1;
-                                end else begin
-                                    read_input_line <=  read_input_line + 1;
+                        end else if (M_flag == 1) begin
+                            if(T_flag == 0) begin
+                                if(N_flag == 0) begin
+                                    if(cal_count == 3) begin
+                                        //stop_flag <= 0;
+                                        read_input_line <= 0;
+                                    end else if(cal_count == 4) begin
+                                        N_flag <= 1;
+                                        read_input_line <= read_input_line + 1;
+                                    end  else begin
+                                        read_input_line <=  read_input_line + 1;
+                                    end
+                                end else if(N_flag == 1) begin
+                                    if(cal_count == 0)begin
+                                        N_flag <= 0;
+                                        read_input_line <= read_input_line + 1;
+                                    end else if(cal_count == 7)begin
+                                        //stop_flag <= 0;
+                                        read_input_line <= 4;
+                                        T_flag <= 1;
+                                    end else begin
+                                        read_input_line <= read_input_line + 1;
+                                    end
                                 end
-                            end else if(N_flag == 1) begin
-                                read_input_line <= read_input_line + 1;
+                            end else if (T_flag == 1) begin
+                                if(N_flag == 0) begin
+                                    if(cal_count == 3) begin
+                                        stop_flag <= 0;
+                                        read_input_line <= 4;
+                                    end else if(cal_count == 4) begin
+                                        N_flag <= 1;
+                                        read_input_line <= read_input_line + 1;
+                                    end  else begin
+                                        read_input_line <=  read_input_line + 1;
+                                    end
+                                end else if(N_flag == 1) begin
+                                    if(cal_count == 0) begin
+                                        N_flag <= 0;
+                                    end else if (cal_count == 7) begin
+                                        cal_fin <= 1;
+                                    end
+                                    read_input_line <= read_input_line + 1;
+                                end
                             end
                         end
                     end
