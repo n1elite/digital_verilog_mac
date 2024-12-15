@@ -1,8 +1,9 @@
 /*****************************************
     
-    Team XX : 
-        2024000000    Kim Mina
-        2024000001    Lee Minho
+    Team 24 : 
+        2019104024    Lee Junho
+        2014104049     Jo Shanghyeon
+        2021104315    Lim Sumin
 *****************************************/
 
 
@@ -39,7 +40,7 @@ module macarray (
 
     wire [3:0] cal_case;
 
-    wire [2:0] N_first, N_second, N_choice;
+    wire [2:0] N_first, N_second;
 
 
     reg [7:0] a11, a12, a13, a14;
@@ -58,19 +59,24 @@ module macarray (
     reg  EN21, EN22, EN23, EN24;
     reg  EN31, EN32, EN33, EN34;
     reg  EN41, EN42, EN43, EN44;
-
-
+	
+    reg WEN11, WEN12, WEN13, WEN14;
+    reg WEN22, WEN23, WEN24;
+    reg WEN33, WEN34;
+    reg WEN44;
 
     reg [2:0] read_input_line;
+    reg [2:0] read_weight_line;
 
     reg [1:0] set_input_line;
 
 
-    reg N_flag;
+    reg N_flag, N_flag2;
     reg T_flag;
-    reg M_flag;
-    reg [2:0] cal_count;
-    reg cal_fin;
+    reg M_flag, M_flag2;
+
+    reg [2:0] cal_count, cal_count2;
+    reg cal_fin, cal_fin2;
 
     reg stop_flag;
 
@@ -78,6 +84,7 @@ module macarray (
 
     reg control_start;
     reg EN_I_read;
+    reg EN_W_read;
 
     //Variable Initialize
 
@@ -87,13 +94,15 @@ module macarray (
 
     assign N_first  =   (N < 5) ?   N   :   4;
     assign N_second =   (N < 5) ?   0   :   N-4;
-    assign N_choice =   (N_flag == 0)   ?   N_first :   N_second;   //안쓸수도?
 
 
     assign cal_case =   (N < 5) ? ((T < 5) ? ((M < 5) ? 0 : 1) : ((M < 5) ? 2 : 3)) : ((T < 5) ? ((M < 5) ? 4 : 5) : ((M < 5) ? 6 : 7));
-                                             
+                          
+                       
     assign ADDR_I   =   read_input_line;
-    assign EN_I     =   START & (cal_fin == 1) ?  0  : (((read_input_line != 0) ? EN_I_read : 1));
+    assign ADDR_W   =   read_weight_line;
+    assign EN_I     =   START & (cal_fin == 1)  ?  0  : (((read_input_line != 0)  ? EN_I_read : 1));
+    assign EN_W     =   START & (cal_fin2 == 1) ?  0  : (((read_weight_line != 0) ? EN_W_read : 1));
 
 
 
@@ -119,6 +128,16 @@ module macarray (
             a43 <= 0;
             a44 <= 0;
 
+	        wb44 <= 0;
+    	    wb33 <= 0; wb34 <= 0;
+    	    wb22 <= 0; wb23 <= 0; wb24 <= 0;
+    	    wb11 <= 0; wb12 <= 0; wb13 <= 0; wb14 <= 0;
+
+	        WEN11<=0; WEN12<=0; WEN13<=0; WEN14<=0;
+    	    WEN22<=0; WEN23<=0; WEN24<=0;
+    	    WEN33<=0; WEN34<=0;
+    	    WEN44<=0;
+
             EN11 <= 0;
             EN12 <= 0;
             EN13 <= 0;
@@ -137,27 +156,284 @@ module macarray (
             EN44 <= 0;
             
             read_input_line <= 0;
+	        read_weight_line <= 0;
 
             set_input_line <= 0;
 
             N_flag <= 0;
+	        N_flag2 <= 0;
             T_flag <= 0;
             M_flag <= 0;
+	        M_flag2 <= 0;
+
             cal_count <= 0;
+	        cal_count2 <= 0;
             cal_fin <= 0;
+            cal_fin2 <= 0;
 
             stop_flag <= 0;
 
             control_start <= 0;
 
             EN_I_read <= 1;
+	        EN_W_read <= 1;
             EN_row1 <= 0;
             EN_row2 <= 0;
             EN_row3 <= 0;
             EN_row4 <= 0;
         end
     end
+   
+    always @(posedge CLK or negedge RSTN) begin
+    	if(START) begin
+            WEN12 <= WEN22;
+            WEN23 <= WEN33;
+            WEN13 <= WEN23;
+            WEN34 <= WEN44;
+            WEN24 <= WEN34;
+            WEN14 <= WEN24;
+            if (cal_count2 - 1 == M && M<8) begin
+                WEN11 <= 1; WEN22 <= 1; WEN33 <= 1; WEN44 <= 1; 
+            end else begin
+                WEN11 <= 0; WEN22 <= 0; WEN33 <= 0; WEN44 <= 0; 
+            end
+	    end	
+    end
 
+    always @(posedge CLK or negedge RSTN) begin
+    	if(control_start) begin
+            wb12 <= wb22;
+            wb23 <= wb33;
+            wb13 <= wb23;
+            wb34 <= wb44;
+            wb24 <= wb34;
+            wb14 <= wb24;
+            case(cal_case)
+                0 : begin
+                    if(N==4) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
+                    end else if (N==3) begin
+                        {wb22, wb33, wb44} <= {RDATA_W[63:40]};
+                    end else if (N==2) begin
+                        {wb33, wb44} <= {RDATA_W[63:48]};
+                    end else begin
+                        {wb44} <= {RDATA_W[63:56]};
+                    end
+                end	
+                1 : begin
+                    if(N==4) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
+                    end else if (N==3) begin
+                        {wb22, wb33, wb44} <= {RDATA_W[63:40]};
+                    end else if (N==2) begin
+                        {wb33, wb44} <= {RDATA_W[63:48]};
+                    end else begin
+                        {wb44} <= {RDATA_W[63:56]};
+                    end
+                end	
+                2 : begin
+                    if(N==4) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
+                    end else if (N==3) begin
+                        {wb22, wb33, wb44} <= {RDATA_W[63:40]};
+                    end else if (N==2) begin
+                        {wb33, wb44} <= {RDATA_W[63:48]};
+                    end else begin
+                        {wb44} <= {RDATA_W[63:56]};
+                    end
+                end	
+                3 : begin
+                    if(N==4) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
+                    end else if (N==3) begin
+                        {wb22, wb33, wb44} <= {RDATA_W[63:40]};
+                    end else if (N==2) begin
+                        {wb33, wb44} <= {RDATA_W[63:48]};
+                    end else begin
+                        {wb44} <= {RDATA_W[63:56]};
+                    end
+                end	
+                4 : begin
+                    if(N==8 & N_flag == 0) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
+                    end else if(N==8 && N_flag == 1) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[31:0]};
+                    end else if (N==7 & N_flag == 0) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
+                    end else if(N==7 && N_flag == 1) begin
+                        {wb22, wb33, wb44} <= {RDATA_W[31:8]};
+                    end else if(N==6 & N_flag == 0) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
+                    end else if(N==6 && N_flag == 1) begin
+                        {wb33, wb44} <= {RDATA_W[31:16]};
+                    end else if(N==5 & N_flag == 0) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
+                    end else if(N==5 && N_flag == 1) begin
+                        {wb44} <= {RDATA_W[31:24]};
+                    end
+                end	
+                5 : begin
+                    if(N==8 & N_flag == 0) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
+                    end else if(N==8 && N_flag == 1) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[31:0]};
+                    end else if (N==7 & N_flag == 0) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
+                    end else if(N==7 && N_flag == 1) begin
+                        {wb22, wb33, wb44} <= {RDATA_W[31:8]};
+                    end else if(N==6 & N_flag == 0) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
+                    end else if(N==6 && N_flag == 1) begin
+                        {wb33, wb44} <= {RDATA_W[31:16]};
+                    end else if(N==5 & N_flag == 0) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
+                    end else if(N==5 && N_flag == 1) begin
+                        {wb44} <= {RDATA_W[31:24]};
+                    end
+                end	
+                6 : begin
+                    if(N==8 & N_flag == 0) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
+                    end else if(N==8 && N_flag == 1) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[31:0]};
+                    end else if (N==7 & N_flag == 0) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
+                    end else if(N==7 && N_flag == 1) begin
+                        {wb22, wb33, wb44} <= {RDATA_W[31:8]};
+                    end else if(N==6 & N_flag == 0) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
+                    end else if(N==6 && N_flag == 1) begin
+                        {wb33, wb44} <= {RDATA_W[31:16]};
+                    end else if(N==5 & N_flag == 0) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
+                    end else if(N==5 && N_flag == 1) begin
+                        {wb44} <= {RDATA_W[31:24]};
+                    end
+                end	
+                7 : begin
+                    if(N==8 & N_flag == 0) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
+                    end else if(N==8 && N_flag == 1) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[31:0]};
+                    end else if (N==7 & N_flag == 0) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
+                    end else if(N==7 && N_flag == 1) begin
+                        {wb22, wb33, wb44} <= {RDATA_W[31:8]};
+                    end else if(N==6 & N_flag == 0) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
+                    end else if(N==6 && N_flag == 1) begin
+                        {wb33, wb44} <= {RDATA_W[31:16]};
+                    end else if(N==5 & N_flag == 0) begin
+                        {wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
+                    end else if(N==5 && N_flag == 1) begin
+                        {wb44} <= {RDATA_W[31:24]};
+                    end
+                end
+            endcase	
+    	end
+    end
+
+
+
+    always @(posedge CLK or negedge RSTN) begin
+    	if(START == 1) begin
+            case(cal_case)
+                0 : begin
+                    if (cal_fin2 == 0) begin
+                        cal_count2 <= cal_count2 + 1;
+                        read_weight_line <=  read_weight_line + 1;
+                        if (cal_count + 1 == M) begin
+                            cal_fin2 <= 1;
+                        end
+                    end
+                end
+                1 : begin
+                    if (cal_fin2 == 0) begin
+                        cal_count2 <= cal_count2 + 1;
+                        read_weight_line <=  read_weight_line + 1;
+                        if (cal_count2 == 7) begin
+                            cal_fin2 <= 1;
+                        end
+                    end
+                end
+                2 : begin
+                    if (cal_fin2 == 0) begin
+                        cal_count2 <= cal_count2 + 1;
+                        read_weight_line <=  read_weight_line + 1;
+                        if (cal_count2 == 3 && M_flag == 0) begin
+                            cal_count2 <= 0; read_weight_line <= 0; M_flag <= 1;
+                        end else if(cal_count2 == 3 && M_flag == 1) begin
+                            cal_fin2 <= 1;
+                        end
+                    end
+                end
+                3 : begin
+                    if(cal_fin2 == 0) begin
+                        cal_count2 <= cal_count2 + 1;
+                        read_weight_line <= read_weight_line + 1;
+                        if(cal_count2 == 7 && M_flag == 0) begin
+                            read_weight_line <= 0; M_flag <= 1; cal_count2 <= 0;
+                        end else if(cal_count2 == 7 && M_flag == 1)
+                            cal_fin2 <= 0;
+                    end
+                end
+                4 : begin
+                    if(cal_fin2 == 0) begin
+                        cal_count2 <= cal_count2 + 1;
+                        read_weight_line <= read_weight_line + 1;
+                        if(cal_count2 == 3 && N_flag2 == 0) begin
+                            read_weight_line <= 0; N_flag2 <= 1; cal_count2 <= 0;
+                        end else if(cal_count2 == 3 && N_flag2 == 1) begin
+                            cal_fin2 <= 1;
+                        end
+                    end
+                end
+                5 : begin
+                    if(cal_fin2 == 0) begin
+                        cal_count2 <= cal_count2 + 1;
+                        read_weight_line <= read_weight_line + 1;
+                        if (cal_count2 == 3 && N_flag2 == 0) begin
+                            read_weight_line <= 0; N_flag2 <= 1; cal_count2 <= 0;
+                        end else if (cal_count2 == 7 && N_flag2 == 1 && M_flag2 == 0) begin
+                            read_weight_line <= 4; N_flag <= 1; cal_count2 <= 4; M_flag2 <= 1; 
+                        end else if (cal_count2 == 7 && N_flag2 == 1 && M_flag2 == 1) begin
+                            cal_fin2 <= 1;
+                        end
+                    end
+                end
+                6 : begin
+                    if(cal_fin2 == 0) begin
+                        cal_count2 <= cal_count2 + 1;
+                        read_weight_line <= read_weight_line + 1;
+                        if(cal_count2 == 3 && N_flag2 == 0) begin
+                            read_weight_line <= 0; cal_count2 <= 0; N_flag2 <= 1;
+                        end else if (cal_count2 == 3 && N_flag2 == 1 && M_flag2 == 0) begin
+                            read_weight_line <= 0; cal_count2 <= 0; N_flag2 <= 0; M_flag2 <= 1;
+                        end else if (cal_count2 == 3 && N_flag2 == 1 && M_flag2 == 1)
+                            cal_fin2 <= 1; 
+                    end
+                end
+                7 : begin
+                    if(cal_fin2 == 0) begin
+                        cal_count2 <= cal_count2 + 1;
+                        read_weight_line <= read_weight_line + 1;
+                        if(cal_count2 == 3 && M_flag2 == 0) begin
+                            read_weight_line <= 0; M_flag2 <= 1; cal_count2 <= 0;
+                        end else if(cal_count2 == 3 && M_flag2 == 1 && N_flag2 == 0) begin
+                            read_weight_line <= 0; M_flag2 <= 0; N_flag2 <= 1; cal_count2 <= 0;
+                        end else if (cal_count2 ==3 && M_flag2 == 1 && N_flag2 == 1) begin
+                            M_flag2 <= 0; N_flag2 <= 0;
+                        end else if(cal_count2 == 7 && M_flag2 == 0) begin
+                            read_weight_line <= 4; M_flag2 <= 1; cal_count2 <= 4; 
+                        end else if(cal_count2 == 7 && M_flag2 == 1 && N_flag2 == 0) begin
+                            read_weight_line <= 4; M_flag2 <= 0; N_flag2 <= 1; cal_count2 <= 4;
+                        end else if (cal_count2 == 7 && M_flag2 ==1 && N_flag2 == 1)
+                            cal_fin2 <= 1;
+                    end
+                end	
+            endcase	
+	    end
+    end
 
     always @(posedge CLK or negedge RSTN) begin
         if(START == 1) begin
@@ -452,37 +728,9 @@ module macarray (
 
 
 
-
-//나중에 case문 지워도 됨
-
     always @(posedge CLK or negedge RSTN) begin
         if(control_start == 1) begin
-            case (cal_case)
-                0: begin 
-                    set_input_line  <=  set_input_line  + 1;
-                end
-                1: begin
-                    set_input_line  <=  set_input_line  + 1;
-                end
-                2: begin
-                    set_input_line  <=  set_input_line  + 1;
-                end
-                3: begin
-                    set_input_line  <=  set_input_line  + 1;
-                end
-                4: begin
-                    set_input_line  <=  set_input_line  + 1;
-                end
-                5: begin
-                    set_input_line  <=  set_input_line  + 1;
-                end
-                6: begin
-                    set_input_line  <=  set_input_line  + 1;
-                end
-                7: begin
-                    set_input_line  <=  set_input_line  + 1;
-                end
-            endcase
+            set_input_line  <=  set_input_line  + 1;
         end
     end
 
@@ -833,67 +1081,205 @@ module macarray (
 
 
 
+    // WRITE YOUR MAC_ARRAY DATAPATH CODE
+	reg [15:0] result1, result2, result3, result4;
+    reg [15:0] result5, result6, result7, result8;
+    reg [15:0] result9, result10, result11, result12;
+    reg [15:0] result13, result14, result15, result16;
 
 
 
-	
-	
-    block P0 (wb11, a11, 0, CLK, RSTN, outp_south0, result0, EN_row1, EN11);
-    //from north
-    block P1 (wb22, a12, result0, CLK, RSTN, outp_south1, result1, EN_row1, EN12);
-    block P2 (wb33, a13, result1, CLK, RSTN, outp_south2, result2, EN_row1, EN13);
-    block P3 (wb44, a14, result2, CLK, RSTN, outp_south3, result3, EN_row1, EN14);
-    
-    //from west
-    block P4 (outp_south0, a21, 0, CLK, RSTN, outp_south4, result4, EN_row2, EN21);
-    block P8 (outp_south4, a31, 0, CLK, RSTN, outp_south8, result8, EN_row3, EN31);
-    block P12 (outp_south8, a41, 0, CLK, RSTN, outp_south12, result12, EN_row4, EN41);
-    //second row
-    block P5 (outp_south1, a22, result4, CLK, RSTN, outp_south5, result5, EN_row2, EN22);
-    block P6 (outp_south2, a23, result5, CLK, RSTN, outp_south6, result6, EN_row2, EN23);
-    block P7 (outp_south3, a24, result6, CLK, RSTN, outp_south7, result7, EN_row2, EN24);
-    //third row
-    block P9 (outp_south5, a32, result8, CLK, RSTN, outp_south9, result9, EN_row3, EN32);
-    block P10 (outp_south6, a33, result9, CLK, RSTN, outp_south10, result10, EN_row3, EN33);
-    block P11 (outp_south7, a34, result10, CLK, RSTN, outp_south11, result11, EN_row3, EN34);
-    //fourth row
-    block P13 (outp_south9, a42, result12, CLK, RSTN, outp_south13, result13, EN_row4, EN42);
-    block P14 (outp_south10, a43, result13, CLK, RSTN, outp_south14, result14, EN_row4, EN43);
-    block P15 (outp_south11, a44, result14, CLK, RSTN, outp_south15, result15, EN_row4, EN44);
+	wire [15:0] multi1, multi2, multi3, multi4;
+    wire [15:0] multi5, multi6, multi7, multi8;
+    wire [15:0] multi9, multi10, multi11, multi12;
+    wire [15:0] multi13, multi14, multi15, multi16;
+
+
+    reg OWEN21, OWEN22, OWEN23, OWEN24;
+    reg OWEN31, OWEN32, OWEN33, OWEN34;
+    reg OWEN41, OWEN42, OWEN43, OWEN44;
 
 
 
-    
-    
+    reg w21, w22, w23, w24;
+    reg w31, w32, w33, w34;
+    reg w41, w42, w43, w44;
 
 
 
-endmodule
+    assign multi1   =   a11 * wb11;
+    assign multi2   =   a12 * wb12;
+    assign multi3   =   a13 * wb13;
+    assign multi4   =   a14 * wb14;
+    assign multi5   =   a21 * w21;
+    assign multi6   =   a22 * w22;
+    assign multi7   =   a23 * w23;
+    assign multi8   =   a24 * w24;
+    assign multi9   =   a31 * w31;
+    assign multi10  =   a32 * w32;
+    assign multi11  =   a33 * w33;
+    assign multi12  =   a34 * w34;
+    assign multi13  =   a41 * w41;
+    assign multi14  =   a42 * w42;
+    assign multi15  =   a43 * w43;
+    assign multi16  =   a44 * w44;
+
+    always @(posedge CLK or negedge RSTN) begin
+		if(~RSTN) begin
+			result1 <= 0; result2 <= 0; result3 <= 0; result4 <= 0;
+            result5 <= 0; result6 <= 0; result7 <= 0; result8 <= 0;
+            result9 <= 0; result10 <= 0; result11 <= 0; result12 <= 0;
+            result13 <= 0; result14 <= 0; result15 <= 0; result16 <= 0;
+
+            OWEN21 <= 0; OWEN22 <= 0; OWEN23 <= 0; OWEN24 <= 0;
+            OWEN31 <= 0; OWEN32 <= 0; OWEN33 <= 0; OWEN34 <= 0;
+            OWEN41 <= 0; OWEN42 <= 0; OWEN43 <= 0; OWEN44 <= 0;
 
 
-//input에 EN 신호 두개 넣어서 col x => x    // col o && row x => x  // col && row o => o
-module block(inp_north, inp_matrix, inp_west, clk, rst, outp_south, result, EN_row, EN_self);
-	input [7:0] inp_north, inp_west, inp_matrix;
-	output reg [7:0] outp_south;
-	input clk, rst;
-	output reg [15:0] result;
-	wire [15:0] multi;
-    input EN_row, EN_self;
-	
-	always @(posedge rst or posedge clk) begin
-		if(~rst) begin
-			result <= 0;
-			outp_south <= 0;
-		end else begin
-			outp_south <= inp_north;  //weight
-            if (EN_row == 0 && EN_self == 0) begin
-			    result <= inp_west + multi;
+            w21 <= 0; w22 <= 0; w23 <= 0; w24 <= 0;
+            w31 <= 0; w32 <= 0; w33 <= 0; w34 <= 0;
+            w41 <= 0; w42 <= 0; w43 <= 0; w44 <= 0;
+        end
+    end
+
+
+
+
+
+
+
+    always @(posedge CLK or negedge RSTN) begin
+		if (control_start) begin
+            w21 <= wb11;
+            w22 <= wb12;
+            w23 <= wb13;
+            w24 <= wb14;
+            w31 <= w21;
+            w32 <= w22;
+            w33 <= w23;
+            w34 <= w24;
+            w41 <= w31;
+            w42 <= w32;
+            w43 <= w33;
+            w44 <= w34;
+
+
+            OWEN21 <= WEN11;
+            OWEN22 <= WEN12;
+            OWEN23 <= WEN13;
+            OWEN24 <= WEN14;
+            OWEN31 <= OWEN21;
+            OWEN32 <= OWEN22;
+            OWEN33 <= OWEN23;
+            OWEN34 <= OWEN24;
+            OWEN41 <= OWEN31;
+            OWEN42 <= OWEN32;
+            OWEN43 <= OWEN33;
+            OWEN44 <= OWEN34;
+
+            
+
+
+            if (EN_row1 == 0 && EN11 == 0 && WEN11 == 0) begin
+			    result1  <=     0      + multi1;
             end else begin
-                result <= 0;
+                result1 <= 0;
             end
-		end
-	end
-	
-	assign multi = inp_north*inp_matrix;
+            if (EN_row1 == 0 && EN12 == 0 && WEN12 == 0) begin
+			    result2  <=  result1   + multi2;
+            end else begin
+                result2 <= 0;
+            end
+            if (EN_row1 == 0 && EN13 == 0 && WEN13 == 0) begin
+			    result3  <=  result2   + multi3;
+            end else begin
+                result3 <= 0;
+            end
+            if (EN_row1 == 0 && EN14 == 0 && WEN14 == 0) begin
+			    result4  <=  result3   + multi4;
+            end else begin
+                result4 <= 0;
+            end
+
+            
+
+            if (EN_row2 == 0 && EN21 == 0 && OWEN21 == 0) begin
+			    result5  <=     0      + multi5;
+            end else begin
+                result5 <= 0;
+            end
+            if (EN_row2 == 0 && EN22 == 0 && OWEN22 == 0) begin
+			    result6  <=  result5   + multi6;
+            end else begin
+                result6 <= 0;
+            end
+            if (EN_row2 == 0 && EN23 == 0 && OWEN23 == 0) begin
+			    result7  <=  result6   + multi7;
+            end else begin
+                result7 <= 0;
+            end
+            if (EN_row2 == 0 && EN24 == 0 && OWEN24 == 0) begin
+			    result8  <=  result7   + multi8;
+            end else begin
+                result8 <= 0;
+            end
+
+
+
+
+            if (EN_row3 == 0 && EN31 == 0 && OWEN31 == 0) begin
+			    result9  <=     0      + multi9;
+            end else begin
+                result9 <= 0;
+            end
+            if (EN_row3 == 0 && EN32 == 0 && OWEN32 == 0) begin
+			    result10 <=  result9   + multi10;
+            end else begin
+                result10 <= 0;
+            end
+            if (EN_row3 == 0 && EN33 == 0 && OWEN33 == 0) begin
+			    result11 <=  result10  + multi11;
+            end else begin
+                result11 <= 0;
+            end
+            if (EN_row3 == 0 && EN34 == 0 && OWEN34 == 0) begin
+			    result12 <=  result11  + multi12;
+            end else begin
+                result12 <= 0;
+            end
+
+
+            
+            
+            
+            if (EN_row4 == 0 && EN41 == 0 && OWEN41 == 0) begin
+			    result13 <=     0      + multi13;
+            end else begin
+                result13 <= 0;
+            end
+            if (EN_row4 == 0 && EN42 == 0 && OWEN42 == 0) begin
+			    result14 <=  result13  + multi14;
+            end else begin
+                result14 <= 0;
+            end
+            if (EN_row4 == 0 && EN43 == 0 && OWEN43 == 0) begin
+			    result15 <=  result14  + multi15;
+            end else begin
+                result15 <= 0;
+            end
+            if (EN_row4 == 0 && EN44 == 0 && OWEN44 == 0) begin
+			    result16 <=  result15  + multi16;
+            end else begin
+                result16 <= 0;
+            end
+            
+           
+        end
+    end
+
+
+
 
 endmodule
+
+
