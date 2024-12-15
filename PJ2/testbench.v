@@ -132,7 +132,7 @@ module testbench;
 		#(10*PERIOD)
 		RSTN <= 1'b1;
 		#(2*PERIOD)
-		MNT <= 12'h373;	//M, N, T values are between 1~8
+		MNT <= 12'h888;	//M, N, T values are between 1~8
 		START <= 1'b1;
 
 		#(1000*PERIOD);

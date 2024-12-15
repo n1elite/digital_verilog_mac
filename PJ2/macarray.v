@@ -136,7 +136,7 @@ module macarray (
     	    wb11 <= 0; wb12 <= 0; wb13 <=0; wb14 <= 0;
 
 	    WEN11<=0; WEN12<=0; WEN13<=0; WEN14<=0;
-    	    WEN22<=0; WEN23<=0; WEN23<=0;
+    	    WEN22<=0; WEN23<=0; WEN24<=0;
     	    WEN33<=0; WEN34<=0;
     	    WEN44<=0;
 
@@ -198,7 +198,7 @@ module macarray (
 		WEN24 <= WEN34;
 		WEN14 <= WEN24;
 	
-		 	if (cal_count2 + 1 == M) begin
+		 	if (cal_count2 + 1 == M && M<8) begin
 				WEN11 <= 1; WEN22 <= 1; WEN33 <= 1; WEN44 <= 1; 
 			end else begin
 				WEN11 <= 0; WEN22 <= 0; WEN33 <= 0; WEN44 <= 0; 
@@ -208,7 +208,7 @@ module macarray (
     end
 
     always @(posedge CLK or negedge RSTN) begin
-    	if(START) begin
+    	if(control_start) begin
 	    wb12 <= wb22;
 	    wb23 <= wb33;
 	    wb13 <= wb23;
@@ -351,32 +351,28 @@ module macarray (
 		case(cal_case)
 			0 : begin
 				 if (cal_fin2 == 0) begin
-                       			 cal_count2 <= cal_count2 + 1;
+                       			cal_count2 <= cal_count2 + 1;
+					read_weight_line <=  read_weight_line + 1;
                         		if (cal_count + 1 == M) begin
-                            			stop_flag2 <= 1;
                             			cal_fin2 <= 1;
                         		end
-                        		read_weight_line <=  read_weight_line + 1;
                  		 end
 			end
 			1 : begin
 				 if (cal_fin2 == 0) begin
                   			cal_count2 <= cal_count2 + 1;
-                    			if (cal_count2 + 1 == M) begin
-                        			stop_flag2 <= 1;
+					read_weight_line <=  read_weight_line + 1;
+                    			if (cal_count2 == 7) begin
                         			cal_fin2 <= 1;
                     			end
-                    			read_weight_line <=  read_weight_line + 1;
                     		  end
 			end
 			2 : begin
 				 if (cal_fin2 == 0) begin
                   			cal_count2 <= cal_count2 + 1;
 					read_weight_line <=  read_weight_line + 1;
-                    			if (cal_count2 + 1 == M && M<4) begin
-                        			stop_flag2 <= 1;
-                    			end else if (cal_count2 == 3 && M_flag == 0) begin
-						stop_flag2 <= 0; M_flag <= 1;
+                			if (cal_count2 == 3 && M_flag == 0) begin
+						cal_count2 <= 0; read_weight_line <= 0; M_flag <= 1;
 					end else if(cal_count2 == 3 && M_flag == 1) begin
 						cal_fin2 <= 1;
 					end
@@ -386,17 +382,10 @@ module macarray (
 				if(cal_fin2 == 0) begin
 					cal_count2 <= cal_count2 + 1;
 					read_weight_line <= read_weight_line + 1;
-					if(cal_count2 == 3 && M_flag == 0) begin
-						read_weight_line <= 0; M_flag <= 1;
-					end else if(cal_count2 == 3 && M_flag == 1)
-						M_flag <= 0;
-					else if(cal_count2 + 1== M && M<8)
-						stop_flag2 <= 1;
-					else if (cal_count2 == 7 && M_flag == 0) begin
-						stop_flag2 <= 0; read_weight_line <= 4; M_flag <= 1;
-					end else if(cal_count2 == 7 && M_flag == 1) begin
-						cal_fin2 <= 1;
-					end	
+					if(cal_count2 == 7 && M_flag == 0) begin
+						read_weight_line <= 0; M_flag <= 1; cal_count2 <= 0;
+					end else if(cal_count2 == 7 && M_flag == 1)
+						cal_fin2 <= 0;
 				end
 			end
 			4 : begin
