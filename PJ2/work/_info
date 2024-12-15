@@ -1,0 +1,81 @@
+m255
+K4
+z2
+!s11f vlog 2020.1 2020.02, Feb 28 2020
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+dC:/intelFPGA_lite/20.1
+vmacarray
+Z0 !s110 1734231573
+!i10b 1
+!s100 Aoj_>F06m;a;:VMWz>1n`1
+Z1 !s11b Dg1SIo80bB@j0V0VzS_@n1
+I163b@o^iCV:Wl>mGjanY:3
+Z2 VDg1SIo80bB@j0V0VzS_@n1
+Z3 dC:/2014104049/prj2 (2)/PJ2
+w1734230798
+8C:/2014104049/prj2 (2)/PJ2/macarray.v
+FC:/2014104049/prj2 (2)/PJ2/macarray.v
+!i122 151
+L0 13 1136
+Z4 OV;L;2020.1;71
+r1
+!s85 0
+31
+Z5 !s108 1734231573.000000
+!s107 C:/2014104049/prj2 (2)/PJ2/macarray.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/2014104049/prj2 (2)/PJ2/macarray.v|
+!i113 1
+Z6 o-work work
+Z7 tCvgOpt 0
+vSRAM
+R0
+!i10b 1
+!s100 7XJ963IMaZcL3S^[WoM691
+R1
+IN4W`zWa0I_W[eFOmkH7P31
+R2
+R3
+w1734165389
+8C:/2014104049/prj2 (2)/PJ2/model.v
+FC:/2014104049/prj2 (2)/PJ2/model.v
+!i122 152
+L0 24 31
+R4
+r1
+!s85 0
+31
+R5
+!s107 C:/2014104049/prj2 (2)/PJ2/model.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/2014104049/prj2 (2)/PJ2/model.v|
+!i113 1
+R6
+R7
+n@s@r@a@m
+vtestbench
+R0
+!i10b 1
+!s100 mQYMdRUl[i2Rh^ilDXRG93
+R1
+Ifheg1XAU[OAc]jWB2jnZ_2
+R2
+R3
+w1734231568
+8C:/2014104049/prj2 (2)/PJ2/testbench.v
+FC:/2014104049/prj2 (2)/PJ2/testbench.v
+!i122 153
+L0 11 133
+R4
+r1
+!s85 0
+31
+R5
+!s107 C:/2014104049/prj2 (2)/PJ2/testbench.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/2014104049/prj2 (2)/PJ2/testbench.v|
+!i113 1
+R6
+R7
