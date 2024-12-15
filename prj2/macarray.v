@@ -838,33 +838,32 @@ module macarray (
 
 	
 	
-    // // WRITE YOUR MAC_ARRAY DATAPATH CODE
+    block P0 (wb11, a11, 0, CLK, RSTN, outp_south0, result0, EN_row1, EN11);
+    //from north
+    block P1 (wb22, a12, result0, CLK, RSTN, outp_south1, result1, EN_row1, EN12);
+    block P2 (wb33, a13, result1, CLK, RSTN, outp_south2, result2, EN_row1, EN13);
+    block P3 (wb44, a14, result2, CLK, RSTN, outp_south3, result3, EN_row1, EN14);
+    
+    //from west
+    block P4 (outp_south0, a21, 0, CLK, RSTN, outp_south4, result4, EN_row2, EN21);
+    block P8 (outp_south4, a31, 0, CLK, RSTN, outp_south8, result8, EN_row3, EN31);
+    block P12 (outp_south8, a41, 0, CLK, RSTN, outp_south12, result12, EN_row4, EN41);
+    //second row
+    block P5 (outp_south1, a22, result4, CLK, RSTN, outp_south5, result5, EN_row2, EN22);
+    block P6 (outp_south2, a23, result5, CLK, RSTN, outp_south6, result6, EN_row2, EN23);
+    block P7 (outp_south3, a24, result6, CLK, RSTN, outp_south7, result7, EN_row2, EN24);
+    //third row
+    block P9 (outp_south5, a32, result8, CLK, RSTN, outp_south9, result9, EN_row3, EN32);
+    block P10 (outp_south6, a33, result9, CLK, RSTN, outp_south10, result10, EN_row3, EN33);
+    block P11 (outp_south7, a34, result10, CLK, RSTN, outp_south11, result11, EN_row3, EN34);
+    //fourth row
+    block P13 (outp_south9, a42, result12, CLK, RSTN, outp_south13, result13, EN_row4, EN42);
+    block P14 (outp_south10, a43, result13, CLK, RSTN, outp_south14, result14, EN_row4, EN43);
+    block P15 (outp_south11, a44, result14, CLK, RSTN, outp_south15, result15, EN_row4, EN44);
 
 
-    // block P0 (wgt_matrix[0], inp_matrix[0], 0, CLK, RSTN, outp_south0, result0);
-	// //from north
-	// block P1 (wgt_matrix[1], inp_matrix[1], result0, CLK, RSTN, outp_south1, result1);
-	// block P2 (wgt_matrix[2], inp_matrix[2], result1, CLK, RSTN, outp_south2, result2);
-	// block P3 (wgt_matrix[3], inp_matrix[3], result2, CLK, RSTN, outp_south3, result3);
-	
-	// //from west
-	// block P4 (outp_south0, inp_matrix[4], 0, CLK, RSTN, outp_south4, result4);
-	// block P8 (outp_south4, inp_matrix[8], 0, CLK, RSTN, outp_south8, result8);
-	// block P12 (outp_south8, inp_matrix[12], 0, CLK, RSTN, outp_south12, result12);
-	// //second row
-	// block P5 (outp_south1, inp_matrix[5], result4, CLK, RSTN, outp_south5, result5);
-	// block P6 (outp_south2, inp_matrix[6], result5, CLK, RSTN, outp_south6, result6);
-	// block P7 (outp_south3, inp_matrix[7], result6, CLK, RSTN, outp_south7, result7);
-	// //third row
-	// block P9 (outp_south5, inp_matrix[9], result8, CLK, RSTN, outp_south9, result9);
-	// block P10 (outp_south6, inp_matrix[10], result9, CLK, RSTN, outp_south10, result10);
-	// block P11 (outp_south7, inp_matrix[11], result10, CLK, RSTN, outp_south11, result11);
-	// //fourth row
-	// block P13 (outp_south9, inp_matrix[13], result12, CLK, RSTN, outp_south13, result13);
-	// block P14 (outp_south10, inp_matrix[14], result13, CLK, RSTN, outp_south14, result14);
-	// block P15 (outp_south11, inp_matrix[15], result14, CLK, RSTN, outp_south15, result15);
 
-
+    
     
 
 
@@ -872,25 +871,29 @@ module macarray (
 endmodule
 
 
-// //input에 EN 신호 두개 넣어서 col x => x    // col o && row x => x  // col && row o => o
-// module block(inp_north, inp_matrix, inp_west, clk, rst, outp_south, result);
-// 	input [7:0] inp_north, inp_west, inp_matrix;
-// 	output reg [7:0] outp_south;
-// 	input clk, rst;
-// 	output reg [15:0] result;
-// 	wire [15:0] multi;
+//input에 EN 신호 두개 넣어서 col x => x    // col o && row x => x  // col && row o => o
+module block(inp_north, inp_matrix, inp_west, clk, rst, outp_south, result, EN_row, EN_self);
+	input [7:0] inp_north, inp_west, inp_matrix;
+	output reg [7:0] outp_south;
+	input clk, rst;
+	output reg [15:0] result;
+	wire [15:0] multi;
+    input EN_row, EN_self;
 	
-// 	always @(posedge rst or posedge clk) begin
-// 		if(~rst) begin
-// 			result <= 0;
-// 			outp_south <= 0;
-// 		end
-// 		else begin
-// 			outp_south <= inp_north;  //weight
-// 			result <= inp_west + multi;
-// 		end
-// 	end
+	always @(posedge rst or posedge clk) begin
+		if(~rst) begin
+			result <= 0;
+			outp_south <= 0;
+		end else begin
+			outp_south <= inp_north;  //weight
+            if (EN_row == 0 && EN_self == 0) begin
+			    result <= inp_west + multi;
+            end else begin
+                result <= 0;
+            end
+		end
+	end
 	
-// 	assign multi = inp_north*input_matrix;
+	assign multi = inp_north*inp_matrix;
 
-// endmodule
+endmodule
