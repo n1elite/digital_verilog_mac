@@ -91,7 +91,8 @@ module macarray (
     reg EN_I_read;
     reg EN_W_read;
 
-    reg control_flag;
+    reg [3:0] control_count;
+    reg toggle;
     //Variable Initialize
 
     assign M = MNT[11:8];
@@ -179,7 +180,8 @@ module macarray (
             cal_fin2 <= 0;
 
             stop_flag <= 0;
-	    control_flag <= 0;
+	    control_count <= 0;
+	    toggle <= 0;
 
             control_start <= 0;
 
@@ -206,6 +208,7 @@ module macarray (
                 timing <= timing +1;
             end
         end
+	
         if (timing < N_choice)begin
             if(EN_I_read == 1) begin
                 EN_row12 <= 0;
@@ -238,7 +241,8 @@ module macarray (
                 EN_row24 <= EN_row23;
                 EN_row34 <= EN_row33;
                 EN_row44 <= EN_row43;
-	    end
+	    end 
+	
         end else if (timing == N_choice ) begin
             EN_row14 <= 1;
         end else if (timing == N_choice + 1) begin
@@ -247,7 +251,7 @@ module macarray (
             EN_row34 <= 1;
         end else if (timing == N_choice + 3) begin
             EN_row44 <= 1;
-        end
+        end 
     end
 
 
@@ -807,6 +811,7 @@ module macarray (
     always @(posedge CLK or negedge RSTN) begin
         if(control_start == 1) begin
             if(N_flag == 0) begin
+		control_count <= control_count + 1;
                 case (N_first)
                     4: begin
                         case (set_input_line)
