@@ -1157,28 +1157,28 @@ module macarray (
 	
     // // WRITE YOUR MAC_ARRAY DATAPATH CODE
 
-  block P0 (wb11, a11, 0, CLK, RSTN, outp_south0, result0, EN_row14, EN11, WEN11, OWEN11);
+  block P0 (wb11, a11, 0, CLK, RSTN, outp_south0, result0, 0, EN11, WEN11, OWEN11);
     //from north
-    block P1 (wb12, a12, result0, CLK, RSTN, outp_south1, result1, EN_row14, EN12, WEN12, OWEN12);
-    block P2 (wb13, a13, result1, CLK, RSTN, outp_south2, result2, EN_row14, EN13, WEN13, OWEN13);
-    block P3 (wb14, a14, result2, CLK, RSTN, outp_south3, result3, EN_row14, EN14, WEN14, OWEN14);
+    block P1 (wb12, a12, result0, CLK, RSTN, outp_south1, result1, 0, EN12, WEN12, OWEN12);
+    block P2 (wb13, a13, result1, CLK, RSTN, outp_south2, result2, 0, EN13, WEN13, OWEN13);
+    block P3 (wb14, a14, result2, CLK, RSTN, outp_south3, result3, 0, EN14, WEN14, OWEN14);
     
     //from west
-    block P4 (outp_south0, a21, 0, CLK, RSTN, outp_south4, result4, EN_row24, EN21, OWEN11, OWEN21);
-    block P8 (outp_south4, a31, 0, CLK, RSTN, outp_south8, result8, EN_row34, EN31, OWEN21, OWEN31);
-    block P12 (outp_south8, a41, 0, CLK, RSTN, outp_south12, result12, EN_row44, EN41, OWEN31, OWEN41);
+    block P4 (outp_south0, a21, 0, CLK, RSTN, outp_south4, result4, 0, EN21, OWEN11, OWEN21);
+    block P8 (outp_south4, a31, 0, CLK, RSTN, outp_south8, result8, 0, EN31, OWEN21, OWEN31);
+    block P12 (outp_south8, a41, 0, CLK, RSTN, outp_south12, result12, 0, EN41, OWEN31, OWEN41);
     //second row
-    block P5 (outp_south1, a22, result4, CLK, RSTN, outp_south5, result5, EN_row24, EN22, OWEN12, OWEN22);
-    block P6 (outp_south2, a23, result5, CLK, RSTN, outp_south6, result6, EN_row24, EN23, OWEN13, OWEN23);
-    block P7 (outp_south3, a24, result6, CLK, RSTN, outp_south7, result7, EN_row24, EN24, OWEN14, OWEN24);
+    block P5 (outp_south1, a22, result4, CLK, RSTN, outp_south5, result5, 0, EN22, OWEN12, OWEN22);
+    block P6 (outp_south2, a23, result5, CLK, RSTN, outp_south6, result6, 0, EN23, OWEN13, OWEN23);
+    block P7 (outp_south3, a24, result6, CLK, RSTN, outp_south7, result7, 0, EN24, OWEN14, OWEN24);
     //third row
-    block P9 (outp_south5, a32, result8, CLK, RSTN, outp_south9, result9, EN_row34, EN32, OWEN22, OWEN32);
-    block P10 (outp_south6, a33, result9, CLK, RSTN, outp_south10, result10, EN_row34, EN33, OWEN23, OWEN33);
-    block P11 (outp_south7, a34, result10, CLK, RSTN, outp_south11, result11, EN_row34, EN34, OWEN24, OWEN34);
+    block P9 (outp_south5, a32, result8, CLK, RSTN, outp_south9, result9, 0, EN32, OWEN22, OWEN32);
+    block P10 (outp_south6, a33, result9, CLK, RSTN, outp_south10, result10, 0, EN33, OWEN23, OWEN33);
+    block P11 (outp_south7, a34, result10, CLK, RSTN, outp_south11, result11, 0, EN34, OWEN24, OWEN34);
     //fourth row
-    block P13 (outp_south9, a42, result12, CLK, RSTN, outp_south13, result13, EN_row44, EN42, OWEN32, OWEN42);
-    block P14 (outp_south10, a43, result13, CLK, RSTN, outp_south14, result14, EN_row44, EN43, OWEN33, OWEN43);
-    block P15 (outp_south11, a44, result14, CLK, RSTN, outp_south15, result15, EN_row44, EN44, OWEN34, OWEN44);
+    block P13 (outp_south9, a42, result12, CLK, RSTN, outp_south13, result13, 0, EN42, OWEN32, OWEN42);
+    block P14 (outp_south10, a43, result13, CLK, RSTN, outp_south14, result14, 0, EN43, OWEN33, OWEN43);
+    block P15 (outp_south11, a44, result14, CLK, RSTN, outp_south15, result15, 0, EN44, OWEN34, OWEN44);
 
 
 
@@ -1187,8 +1187,8 @@ module macarray (
 
 
     reg [1:0] r_count1;
-    reg [3:0] r_count2;
-    reg [1:0] r_flag;
+    reg [2:0] r_count2;
+    reg [2:0] r_flag;
 
     reg [15:0] o11, o12, o13, o14, o15, o16, o17, o18;
     reg [15:0] o21, o22, o23, o24, o25, o26, o27, o28;
@@ -1199,11 +1199,12 @@ module macarray (
     reg [15:0] o71, o72, o73, o74, o75, o76, o77, o78;
     reg [15:0] o81, o82, o83, o84, o85, o86, o87, o88;
 
+    reg [3:0] addo;
 
     always @(posedge CLK or negedge RSTN) begin
         if(~RSTN) begin
             r_count1 <= 0;
-            r_count2 <= 0;
+            r_count2 <= 3;
             r_flag <= 0;
 
             o11 <= 0;
@@ -1278,6 +1279,8 @@ module macarray (
             o87 <= 0;
             o88 <= 0;
 
+            addo <=0 ;
+
         end
     end
 
@@ -1296,30 +1299,50 @@ module macarray (
                             o11 <= result3;
                         end else if(r_count1 == 2) begin
                             o12 <= result3;
-                            o15 <= result7;
+                            o21 <= result7;
                         end else if(r_count1 == 3) begin
                             o13 <= result3;
-                            o16 <= result7;
-                            o21 <= result11;
+                            o22 <= result7;
+                            o31 <= result11;
 
                             r_flag <= 2;
                         end
                     end else if (r_flag == 2) begin
                         if(r_count1 == 0) begin
                             o14 <= result3;
-                            o17 <= result7;
-                            o22 <= result11;
-                            o25 <= result15;
+                            o23 <= result7;
+                            o32 <= result11;
+                            o41 <= result15;
                         end else if(r_count1 == 1) begin
-                            o18 <= result7;
-                            o23 <= result11;
-                            o26 <= result15;
+                            o24 <= result7;
+                            o33 <= result11;
+                            o42 <= result15;
                         end else if(r_count1 == 2) begin
-                            o24 <= result11;
-                            o27 <= result15;
+                            o34 <= result11;
+                            o43 <= result15;
                         end else if(r_count1 == 3) begin
-                            o28 <= result15;
+                            o44 <= result15;
                             r_flag <= 3;
+                        end
+                    end else if (r_flag == 3) begin
+                        if(r_count1 == 3) begin
+                            r_flag <= 4;
+                        end
+                    end else if (r_flag == 4) begin
+                        if(r_count1 == 3) begin
+                            r_flag <= 5;
+                        end
+                    end else if (r_flag == 5) begin
+                        if(r_count1 == 3) begin
+                            r_flag <= 6;
+                        end
+                    end else if (r_flag == 6) begin
+                        if(r_count1 == 3) begin
+                            r_flag <= 7;
+                        end
+                    end else if (r_flag == 7) begin
+                        if(r_count1 == 3) begin
+                            r_flag <= 8;
                         end
                     end
 
@@ -1336,58 +1359,877 @@ module macarray (
                             o11 <= result3;
                         end else if(r_count1 == 2) begin
                             o12 <= result3;
-                            o15 <= result7;
+                            o21 <= result7;
                         end else if(r_count1 == 3) begin
                             o13 <= result3;
-                            o16 <= result7;
-                            o21 <= result11;
+                            o22 <= result7;
+                            o31 <= result11;
 
                             r_flag <= 2;
                         end
                     end else if (r_flag == 2) begin
                         if(r_count1 == 0) begin
                             o14 <= result3;
-                            o17 <= result7;
-                            o22 <= result11;
-                            o25 <= result15;
+                            o23 <= result7;
+                            o32 <= result11;
+                            o41 <= result15;
                         end else if(r_count1 == 1) begin
-                            o18 <= result7;
-                            o23 <= result11;
-                            o26 <= result15;
+                            o15 <= result3;
+                            o24 <= result7;
+                            o33 <= result11;
+                            o42 <= result15;
                         end else if(r_count1 == 2) begin
-                            o24 <= result11;
-                            o27 <= result15;
+                            o16 <= result3;
+                            o25 <= result7;
+                            o34 <= result11;
+                            o43 <= result15;
                         end else if(r_count1 == 3) begin
-                            o28 <= result15;
+                            o17 <= result3;
+                            o26 <= result7;
+                            o35 <= result11;
+                            o44 <= result15;
                             r_flag <= 3;
+                        end
+                    end else if (r_flag == 3) begin
+                        if(r_count1 == 0) begin
+                            o18 <= result3;
+                            o27 <= result7;
+                            o36 <= result11;
+                            o45 <= result15;
+                        end else if(r_count1 == 1) begin
+                            o28 <= result7;
+                            o37 <= result11;
+                            o46 <= result15;
+                        end else if(r_count1 == 2) begin
+                            o38 <= result11;
+                            o47 <= result15;
+                        end else if(r_count1 == 3) begin
+                            o48 <= result15;
+                            r_flag <= 4;
+                        end
+                    end else if (r_flag == 4) begin
+                        if(r_count1 == 0) begin
+                        end else if(r_count1 == 1) begin
+                        end else if(r_count1 == 2) begin
+                        end else if(r_count1 == 3) begin
+                            r_flag <= 5;
+                        end
+                    end else if (r_flag == 5) begin
+                        if(r_count1 == 0) begin
+                        end else if(r_count1 == 1) begin
+                        end else if(r_count1 == 2) begin
+                        end else if(r_count1 == 3) begin
+                            r_flag <= 6;
+                        end
+                    end else if (r_flag == 6) begin
+                        if(r_count1 == 0) begin
+                        end else if(r_count1 == 1) begin
+                        end else if(r_count1 == 2) begin
+                        end else if(r_count1 == 3) begin
+                            r_flag <= 7;
+                        end
+                    end else if (r_flag == 7) begin
+                        if(r_count1 == 0) begin
+                        end else if(r_count1 == 1) begin
+                        end else if(r_count1 == 2) begin
+                        end else if(r_count1 == 3) begin
+                            r_flag <= 8;
                         end
                     end
                 end
                 2: begin
                     r_count1 <= r_count1 + 1;
+                    if(r_flag == 0)begin
+                        if(r_count1 == 3)begin
+                            r_flag <= 1;
+                        end
+
+                    end else if (r_flag == 1) begin
+                        if(r_count1 == 1)begin
+                            o11 <= result3;
+                        end else if(r_count1 == 2) begin
+                            o12 <= result3;
+                            o21 <= result7;
+                        end else if(r_count1 == 3) begin
+                            o13 <= result3;
+                            o22 <= result7;
+                            o31 <= result11;
+
+                            r_flag <= 2;
+                        end
+                    end else if (r_flag == 2) begin
+                        if(r_count1 == 0) begin
+                            o14 <= result3;
+                            o23 <= result7;
+                            o32 <= result11;
+                            o41 <= result15;
+                        end else if(r_count1 == 1) begin
+                            o51 <= result3;
+                            o24 <= result7;
+                            o33 <= result11;
+                            o42 <= result15;
+                        end else if(r_count1 == 2) begin
+                            o52 <= result3;
+                            o61 <= result7;
+                            o34 <= result11;
+                            o43 <= result15;
+                        end else if(r_count1 == 3) begin
+                            o53 <= result3;
+                            o62 <= result7;
+                            o71 <= result11;
+                            o44 <= result15;
+                            r_flag <= 3;
+                        end
+                    end else if (r_flag == 3) begin
+                        if(r_count1 == 0) begin
+                            o54 <= result3;
+                            o63 <= result7;
+                            o72 <= result11;
+                            o81 <= result15;
+                        end else if(r_count1 == 1) begin
+                            o64 <= result7;
+                            o73 <= result11;
+                            o82 <= result15;
+                        end else if(r_count1 == 2) begin
+                            o74 <= result11;
+                            o83 <= result15;
+                        end else if(r_count1 == 3) begin
+                            o84 <= result15;
+                            r_flag <= 4;
+                        end
+                    end else if (r_flag == 4) begin
+                        if(r_count1 == 0) begin
+                        end else if(r_count1 == 1) begin
+                        end else if(r_count1 == 2) begin
+                        end else if(r_count1 == 3) begin
+                            r_flag <= 5;
+                        end
+                    end else if (r_flag == 5) begin
+                        if(r_count1 == 0) begin
+                        end else if(r_count1 == 1) begin
+                        end else if(r_count1 == 2) begin
+                        end else if(r_count1 == 3) begin
+                            r_flag <= 6;
+                        end
+                    end else if (r_flag == 6) begin
+                        if(r_count1 == 0) begin
+                        end else if(r_count1 == 1) begin
+                        end else if(r_count1 == 2) begin
+                        end else if(r_count1 == 3) begin
+                            r_flag <= 7;
+                        end
+                    end else if (r_flag == 7) begin
+                        if(r_count1 == 0) begin
+                        end else if(r_count1 == 1) begin
+                        end else if(r_count1 == 2) begin
+                        end else if(r_count1 == 3) begin
+                            r_flag <= 8;
+                        end
+                    end
                 end
                 3: begin
                     r_count1 <= r_count1 + 1;
+                    if(r_flag == 0)begin
+                        if(r_count1 == 3)begin
+                            r_flag <= 1;
+                        end
+
+                    end else if (r_flag == 1) begin
+                        if(r_count1 == 1)begin
+                            o11 <= result3;
+                        end else if(r_count1 == 2) begin
+                            o12 <= result3;
+                            o21 <= result7;
+                        end else if(r_count1 == 3) begin
+                            o13 <= result3;
+                            o22 <= result7;
+                            o31 <= result11;
+
+                            r_flag <= 2;
+                        end
+                    end else if (r_flag == 2) begin
+                        if(r_count1 == 0) begin
+                            o14 <= result3;
+                            o23 <= result7;
+                            o32 <= result11;
+                            o41 <= result15;
+                        end else if(r_count1 == 1) begin
+                            o51 <= result3;
+                            o24 <= result7;
+                            o33 <= result11;
+                            o42 <= result15;
+                        end else if(r_count1 == 2) begin
+                            o52 <= result3;
+                            o61 <= result7;
+                            o34 <= result11;
+                            o43 <= result15;
+                        end else if(r_count1 == 3) begin
+                            o53 <= result3;
+                            o62 <= result7;
+                            o71 <= result11;
+                            o44 <= result15;
+                            r_flag <= 3;
+                        end
+                    end else if (r_flag == 3) begin
+                        if(r_count1 == 0) begin
+                            o54 <= result3;
+                            o63 <= result7;
+                            o72 <= result11;
+                            o81 <= result15;
+                        end else if(r_count1 == 1) begin
+                            o15 <= result3;
+                            o64 <= result7;
+                            o73 <= result11;
+                            o82 <= result15;
+                        end else if(r_count1 == 2) begin
+                            o16 <= result3;
+                            o25 <= result7;
+                            o74 <= result11;
+                            o83 <= result15;
+                        end else if(r_count1 == 3) begin
+                            o17 <= result3;
+                            o26 <= result7;
+                            o35 <= result11;
+                            o84 <= result15;
+                            r_flag <= 4;
+                        end
+                    end else if (r_flag == 4) begin
+                        if(r_count1 == 0) begin
+                            o18 <= result3;
+                            o27 <= result7;
+                            o36 <= result11;
+                            o45 <= result15;
+                        end else if(r_count1 == 1) begin
+                            o28 <= result7;
+                            o37 <= result11;
+                            o46 <= result15;
+                        end else if(r_count1 == 2) begin
+                            o38 <= result11;
+                            o47 <= result15;
+                        end else if(r_count1 == 3) begin
+                            o48 <= result15;
+                            r_flag <= 5;
+                        end
+                    end else if (r_flag == 5) begin
+                        if(r_count1 == 0) begin
+                        end else if(r_count1 == 1) begin
+                        end else if(r_count1 == 2) begin
+                        end else if(r_count1 == 3) begin
+                            r_flag <= 6;
+                        end
+                    end else if (r_flag == 6) begin
+                        if(r_count1 == 0) begin
+                        end else if(r_count1 == 1) begin
+                        end else if(r_count1 == 2) begin
+                        end else if(r_count1 == 3) begin
+                            r_flag <= 7;
+                        end
+                    end else if (r_flag == 7) begin
+                        if(r_count1 == 0) begin
+                        end else if(r_count1 == 1) begin
+                        end else if(r_count1 == 2) begin
+                        end else if(r_count1 == 3) begin
+                            r_flag <= 8;
+                        end
+                    end
                 end
                 4: begin
                     r_count2 <= r_count2 + 1;
+                    if(r_flag == 0)begin
+                        if(r_count2 == 0) begin
+                        end else if (r_count2 == 1) begin
+                        end else if (r_count2 == 2) begin
+                        end else if (r_count2 == 3) begin
+                        end else if (r_count2 == 4) begin
+                        end else if (r_count2 == 5) begin
+                        end else if (r_count2 == 6) begin
+                        end else if (r_count2 == 7) begin
+                            r_flag <=1;
+                        end
+                    end if(r_flag == 1)begin
+                        if(r_count2 == 0) begin
+                            o11 <= result3;
+                        end else if (r_count2 == 1) begin
+                            o12 <= result3;
+                            o21 <= result7;
+                        end else if (r_count2 == 2) begin
+                            o13 <= result3;
+                            o22 <= result7;
+                            o31 <= result11;
+                        end else if (r_count2 == 3) begin
+                            o14 <= result3;
+                            o23 <= result7;
+                            o32 <= result11;
+                            o41 <= result15;
+                        end else if (r_count2 == 4) begin
+                            o11 <= o11 + result3;
+                            o24 <= result7;
+                            o33 <= result11;
+                            o42 <= result15;
+                        end else if (r_count2 == 5) begin
+                            o12 <= o12 + result3;
+                            o21 <= o21 + result7;
+                            o34 <= result11;
+                            o43 <= result15;
+                        end else if (r_count2 == 6) begin
+                            o13 <= o13 + result3;
+                            o22 <= o22 + result7;
+                            o31 <= o31 + result11;
+                            o44 <= result15;
+                        end else if (r_count2 == 7) begin
+                            o14 <= o14 + result3;
+                            o23 <= o23 + result7;
+                            o32 <= o32 + result11;
+                            o41 <= o41 + result15;
+                            r_flag <=2;
+                        end
+                    end if(r_flag == 2)begin
+                        if(r_count2 == 0) begin
+                            o24 <= o24 + result7;
+                            o33 <= o33 + result11;
+                            o42 <= o42 + result15;
+                        end else if (r_count2 == 1) begin
+                            o34 <= o34 + result11;
+                            o43 <= o43 + result15;
+                        end else if (r_count2 == 2) begin
+                            o44 <= o44 + result15;
+                        end else if (r_count2 == 3) begin
+                        end else if (r_count2 == 4) begin
+                        end else if (r_count2 == 5) begin
+                        end else if (r_count2 == 6) begin
+                        end else if (r_count2 == 7) begin
+                            r_flag <=3;
+                        end
+                    end if(r_flag == 3)begin
+                        if(r_count2 == 0) begin
+                        end else if (r_count2 == 1) begin
+                        end else if (r_count2 == 2) begin
+                        end else if (r_count2 == 3) begin
+                        end else if (r_count2 == 4) begin
+                        end else if (r_count2 == 5) begin
+                        end else if (r_count2 == 6) begin
+                        end else if (r_count2 == 7) begin
+                            r_flag <=4;
+                        end
+                    end if(r_flag == 4)begin
+                        if(r_count2 == 0) begin
+                        end else if (r_count2 == 1) begin
+                        end else if (r_count2 == 2) begin
+                        end else if (r_count2 == 3) begin
+                        end else if (r_count2 == 4) begin
+                        end else if (r_count2 == 5) begin
+                        end else if (r_count2 == 6) begin
+                        end else if (r_count2 == 7) begin
+                            r_flag <=5;
+                        end
+                    end if(r_flag == 5)begin
+                        if(r_count2 == 0) begin
+                        end else if (r_count2 == 1) begin
+                        end else if (r_count2 == 2) begin
+                        end else if (r_count2 == 3) begin
+                        end else if (r_count2 == 4) begin
+                        end else if (r_count2 == 5) begin
+                        end else if (r_count2 == 6) begin
+                        end else if (r_count2 == 7) begin
+                            r_flag <=6;
+                        end
+                    end
+
                 end
                 5: begin
                     r_count2 <= r_count2 + 1;
+                    if(r_flag == 0)begin
+                        if(r_count2 == 0) begin
+                        end else if (r_count2 == 1) begin
+                        end else if (r_count2 == 2) begin
+                        end else if (r_count2 == 3) begin
+                        end else if (r_count2 == 4) begin
+                        end else if (r_count2 == 5) begin
+                        end else if (r_count2 == 6) begin
+                        end else if (r_count2 == 7) begin
+                            r_flag <=1;
+                        end
+                    end if(r_flag == 1)begin
+                        if(r_count2 == 0) begin
+                            o11 <= result3;
+                        end else if (r_count2 == 1) begin
+                            o12 <= result3;
+                            o21 <= result7;
+                        end else if (r_count2 == 2) begin
+                            o13 <= result3;
+                            o22 <= result7;
+                            o31 <= result11;
+                        end else if (r_count2 == 3) begin
+                            o14 <= result3;
+                            o23 <= result7;
+                            o32 <= result11;
+                            o41 <= result15;
+                        end else if (r_count2 == 4) begin
+                            o11 <= o11 + result3;
+                            o24 <= result7;
+                            o33 <= result11;
+                            o42 <= result15;
+                        end else if (r_count2 == 5) begin
+                            o12 <= o12 + result3;
+                            o21 <= o21 + result7;
+                            o34 <= result11;
+                            o43 <= result15;
+                        end else if (r_count2 == 6) begin
+                            o13 <= o13 + result3;
+                            o22 <= o22 + result7;
+                            o31 <= o31 + result11;
+                            o44 <= result15;
+                        end else if (r_count2 == 7) begin
+                            o14 <= o14 + result3;
+                            o23 <= o23 + result7;
+                            o32 <= o32 + result11;
+                            o41 <= o41 + result15;
+                            r_flag <=2;
+                        end
+                    end if(r_flag == 2)begin
+                        if(r_count2 == 0) begin
+                            o15 <= result3;
+                            o24 <= o24 + result7;
+                            o33 <= o33 + result11;
+                            o42 <= o42 + result15;
+                        end else if (r_count2 == 1) begin
+                            o16 <= result3;
+                            o25 <= result7;
+                            o34 <= o34 + result11;
+                            o43 <= o43 + result15;
+                        end else if (r_count2 == 2) begin
+                            o17 <= result3;
+                            o26 <= result7;
+                            o35 <= result11;
+                            o44 <= o44 + result15;
+                        end else if (r_count2 == 3) begin
+                            o18 <= result3;
+                            o27 <= result7;
+                            o36 <= result11;
+                            o45 <= result11;
+                        end else if (r_count2 == 4) begin
+                            o15 <= o15 + result3;
+                            o28 <= result7;
+                            o37 <= result11;
+                            o46 <= result11;
+                        end else if (r_count2 == 5) begin
+                            o16 <= o16 + result3;
+                            o25 <= o25 + result7;
+                            o38 <= result11;
+                            o47 <= result11;
+                        end else if (r_count2 == 6) begin
+                            o17 <= o17 + result3;
+                            o26 <= o26 + result7;
+                            o35 <= o35 + result11;
+                            o48 <= result11;
+                        end else if (r_count2 == 7) begin
+                            o18 <= o18 + result3;
+                            o27 <= o27 + result7;
+                            o36 <= o36 + result11;
+                            o45 <= o45 + result11;
+                            r_flag <=3;
+                        end
+                    end if(r_flag == 3)begin
+                        if(r_count2 == 0) begin
+                            o28 <= o28 + result7;
+                            o37 <= o37 + result11;
+                            o46 <= o46 +result11;
+                        end else if (r_count2 == 1) begin
+                            o38 <= o38 + result11;
+                            o47 <= o47 + result11;
+                        end else if (r_count2 == 2) begin
+                            o48 <= o48 + result11;
+                        end else if (r_count2 == 3) begin
+                        end else if (r_count2 == 4) begin
+                        end else if (r_count2 == 5) begin
+                        end else if (r_count2 == 6) begin
+                        end else if (r_count2 == 7) begin
+                            r_flag <=4;
+                        end
+                    end if(r_flag == 4)begin
+                        if(r_count2 == 0) begin
+                        end else if (r_count2 == 1) begin
+                        end else if (r_count2 == 2) begin
+                        end else if (r_count2 == 3) begin
+                        end else if (r_count2 == 4) begin
+                        end else if (r_count2 == 5) begin
+                        end else if (r_count2 == 6) begin
+                        end else if (r_count2 == 7) begin
+                            r_flag <=5;
+                        end
+                    end if(r_flag == 5)begin
+                        if(r_count2 == 0) begin
+                        end else if (r_count2 == 1) begin
+                        end else if (r_count2 == 2) begin
+                        end else if (r_count2 == 3) begin
+                        end else if (r_count2 == 4) begin
+                        end else if (r_count2 == 5) begin
+                        end else if (r_count2 == 6) begin
+                        end else if (r_count2 == 7) begin
+                            r_flag <=6;
+                        end
+                    end
                 end
                 6: begin
                     r_count2 <= r_count2 + 1;
+                    if(r_flag == 0)begin
+                        if(r_count2 == 0) begin
+                        end else if (r_count2 == 1) begin
+                        end else if (r_count2 == 2) begin
+                        end else if (r_count2 == 3) begin
+                        end else if (r_count2 == 4) begin
+                        end else if (r_count2 == 5) begin
+                        end else if (r_count2 == 6) begin
+                        end else if (r_count2 == 7) begin
+                            r_flag <=1;
+                        end
+                    end if(r_flag == 1)begin
+                        if(r_count2 == 0) begin
+                            o11 <= result3;
+                        end else if (r_count2 == 1) begin
+                            o12 <= result3;
+                            o21 <= result7;
+                        end else if (r_count2 == 2) begin
+                            o13 <= result3;
+                            o22 <= result7;
+                            o31 <= result11;
+                        end else if (r_count2 == 3) begin
+                            o14 <= result3;
+                            o23 <= result7;
+                            o32 <= result11;
+                            o41 <= result15;
+                        end else if (r_count2 == 4) begin
+                            o11 <= o11 + result3;
+                            o24 <= result7;
+                            o33 <= result11;
+                            o42 <= result15;
+                        end else if (r_count2 == 5) begin
+                            o12 <= o12 + result3;
+                            o21 <= o21 + result7;
+                            o34 <= result11;
+                            o43 <= result15;
+                        end else if (r_count2 == 6) begin
+                            o13 <= o13 + result3;
+                            o22 <= o22 + result7;
+                            o31 <= o31 + result11;
+                            o44 <= result15;
+                        end else if (r_count2 == 7) begin
+                            o14 <= o14 + result3;
+                            o23 <= o23 + result7;
+                            o32 <= o32 + result11;
+                            o41 <= o41 + result15;
+                            r_flag <=2;
+                        end
+                    end if(r_flag == 2)begin
+                        if(r_count2 == 0) begin
+                            o51 <= result3;
+                            o24 <= o24 + result7;
+                            o33 <= o33 + result11;
+                            o42 <= o42 + result15;
+                        end else if (r_count2 == 1) begin
+                            o52 <= result3;
+                            o61 <= result7;
+                            o34 <= o34 + result11;
+                            o43 <= o43 + result15;
+                        end else if (r_count2 == 2) begin
+                            o53 <= result3;
+                            o62 <= result7;
+                            o71 <= result11;
+                            o44 <= o44 + result15;
+                        end else if (r_count2 == 3) begin
+                            o54 <= result3;
+                            o63 <= result7;
+                            o72 <= result11;
+                            o81 <= result11;
+                        end else if (r_count2 == 4) begin
+                            o51 <= o51 + result3;
+                            o64 <= result7;
+                            o73 <= result11;
+                            o82 <= result11;
+                        end else if (r_count2 == 5) begin
+                            o52 <= o52 + result3;
+                            o61 <= o61 + result7;
+                            o74 <= result11;
+                            o83 <= result11;
+                        end else if (r_count2 == 6) begin
+                            o53 <= o53 + result3;
+                            o62 <= o62 + result7;
+                            o71 <= o71 + result11;
+                            o84 <= result11;
+                        end else if (r_count2 == 7) begin
+                            o54 <= o54 + result3;
+                            o63 <= o63 + result7;
+                            o72 <= o72 + result11;
+                            o81 <= o81 + result11;
+                            r_flag <=3;
+                        end
+                    end if(r_flag == 3)begin
+                        if(r_count2 == 0) begin
+                            o64 <= o64 + result7;
+                            o73 <= o73 + result11;
+                            o82 <= o82 +result11;
+                        end else if (r_count2 == 1) begin
+                            o74 <= o74 + result11;
+                            o83 <= o83 + result11;
+                        end else if (r_count2 == 2) begin
+                            o84 <= o84 + result11;
+                        end else if (r_count2 == 3) begin
+                        end else if (r_count2 == 4) begin
+                        end else if (r_count2 == 5) begin
+                        end else if (r_count2 == 6) begin
+                        end else if (r_count2 == 7) begin
+                            r_flag <=4;
+                        end
+                    end if(r_flag == 4)begin
+                        if(r_count2 == 0) begin
+                        end else if (r_count2 == 1) begin
+                        end else if (r_count2 == 2) begin
+                        end else if (r_count2 == 3) begin
+                        end else if (r_count2 == 4) begin
+                        end else if (r_count2 == 5) begin
+                        end else if (r_count2 == 6) begin
+                        end else if (r_count2 == 7) begin
+                            r_flag <=5;
+                        end
+                    end if(r_flag == 5)begin
+                        if(r_count2 == 0) begin
+                        end else if (r_count2 == 1) begin
+                        end else if (r_count2 == 2) begin
+                        end else if (r_count2 == 3) begin
+                        end else if (r_count2 == 4) begin
+                        end else if (r_count2 == 5) begin
+                        end else if (r_count2 == 6) begin
+                        end else if (r_count2 == 7) begin
+                            r_flag <=6;
+                        end
+                    end
                 end
                 7: begin
                     r_count2 <= r_count2 + 1;
+                    if(r_flag == 0)begin
+                        if(r_count2 == 0) begin
+                        end else if (r_count2 == 1) begin
+                        end else if (r_count2 == 2) begin
+                        end else if (r_count2 == 3) begin
+                        end else if (r_count2 == 4) begin
+                        end else if (r_count2 == 5) begin
+                        end else if (r_count2 == 6) begin
+                        end else if (r_count2 == 7) begin
+                            r_flag <=1;
+                        end
+                    end if(r_flag == 1)begin
+                        if(r_count2 == 0) begin
+                            o11 <= result3;
+                        end else if (r_count2 == 1) begin
+                            o12 <= result3;
+                            o21 <= result7;
+                        end else if (r_count2 == 2) begin
+                            o13 <= result3;
+                            o22 <= result7;
+                            o31 <= result11;
+                        end else if (r_count2 == 3) begin
+                            o14 <= result3;
+                            o23 <= result7;
+                            o32 <= result11;
+                            o41 <= result15;
+                        end else if (r_count2 == 4) begin
+                            o11 <= o11 + result3;
+                            o24 <= result7;
+                            o33 <= result11;
+                            o42 <= result15;
+                        end else if (r_count2 == 5) begin
+                            o12 <= o12 + result3;
+                            o21 <= o21 + result7;
+                            o34 <= result11;
+                            o43 <= result15;
+                        end else if (r_count2 == 6) begin
+                            o13 <= o13 + result3;
+                            o22 <= o22 + result7;
+                            o31 <= o31 + result11;
+                            o44 <= result15;
+                        end else if (r_count2 == 7) begin
+                            o14 <= o14 + result3;
+                            o23 <= o23 + result7;
+                            o32 <= o32 + result11;
+                            o41 <= o41 + result15;
+                            r_flag <=2;
+                        end
+                    end if(r_flag == 2)begin
+                        if(r_count2 == 0) begin
+                            o51 <= result3;
+                            o24 <= o24 + result7;
+                            o33 <= o33 + result11;
+                            o42 <= o42 + result15;
+                        end else if (r_count2 == 1) begin
+                            o52 <= result3;
+                            o61 <= result7;
+                            o34 <= o34 + result11;
+                            o43 <= o43 + result15;
+                        end else if (r_count2 == 2) begin
+                            o53 <= result3;
+                            o62 <= result7;
+                            o71 <= result11;
+                            o44 <= o44 + result15;
+                        end else if (r_count2 == 3) begin
+                            o54 <= result3;
+                            o63 <= result7;
+                            o72 <= result11;
+                            o81 <= result11;
+                        end else if (r_count2 == 4) begin
+                            o51 <= o51 + result3;
+                            o64 <= result7;
+                            o73 <= result11;
+                            o82 <= result11;
+                        end else if (r_count2 == 5) begin
+                            o52 <= o52 + result3;
+                            o61 <= o61 + result7;
+                            o74 <= result11;
+                            o83 <= result11;
+                        end else if (r_count2 == 6) begin
+                            o53 <= o53 + result3;
+                            o62 <= o62 + result7;
+                            o71 <= o71 + result11;
+                            o84 <= result11;
+                        end else if (r_count2 == 7) begin
+                            o54 <= o54 + result3;
+                            o63 <= o63 + result7;
+                            o72 <= o72 + result11;
+                            o81 <= o81 + result11;
+                            r_flag <=3;
+                        end
+                    end if(r_flag == 3)begin
+                        if(r_count2 == 0) begin
+                            o15 <= result3;
+                            o64 <= o64 + result7;
+                            o73 <= o73 + result11;
+                            o82 <= o82 +result11;
+                        end else if (r_count2 == 1) begin
+                            o16 <= result3;
+                            o25 <= result7;
+                            o74 <= o74 + result11;
+                            o83 <= o83 + result11;
+                        end else if (r_count2 == 2) begin
+                            o17 <= result3;
+                            o26 <= result7;
+                            o35 <= result11;
+                            o84 <= o84 + result11;
+                        end else if (r_count2 == 3) begin
+                            o18 <= result3;
+                            o27 <= result7;
+                            o36 <= result11;
+                            o45 <= result11;
+                        end else if (r_count2 == 4) begin
+                            o15 <= o15 + result3;
+                            o28 <= result7;
+                            o37 <= result11;
+                            o46 <= result11;
+                        end else if (r_count2 == 5) begin
+                            o16 <= o16 + result3;
+                            o25 <= o25 + result7;
+                            o38 <= result11;
+                            o47 <= result11;
+                        end else if (r_count2 == 6) begin
+                            o17 <= o17 + result3;
+                            o26 <= o26 + result7;
+                            o35 <= o35 + result11;
+                            o48 <= result11;
+                        end else if (r_count2 == 7) begin
+                            o18 <= o18 + result3;
+                            o27 <= o27 + result7;
+                            o36 <= o36 + result11;
+                            o45 <= o45 + result11;
+                            r_flag <=4;
+                        end
+                    end if(r_flag == 4)begin
+                        if(r_count2 == 0) begin
+                            o55 <= result3;
+                            o28 <= o28 + result7;
+                            o37 <= o37 + result11;
+                            o46 <= o46 +result11;
+                        end else if (r_count2 == 1) begin
+                            o56 <= result3;
+                            o65 <= result7;
+                            o38 <= o38 + result11;
+                            o47 <= o47 + result11;
+                        end else if (r_count2 == 2) begin
+                            o57 <= result3;
+                            o66 <= result7;
+                            o75 <= result11;
+                            o48 <= o48 + result11;
+                        end else if (r_count2 == 3) begin
+                            o58 <= result3;
+                            o67 <= result7;
+                            o76 <= result11;
+                            o85 <= result15;
+                        end else if (r_count2 == 4) begin
+                            o55 <= o55 + result3;
+                            o68 <= result7;
+                            o77 <= result11;
+                            o86 <= result15;
+                        end else if (r_count2 == 5) begin
+                            o56 <= o56 + result3;
+                            o65 <= o65 + result7;
+                            o78 <= result11;
+                            o87 <= result15;
+                        end else if (r_count2 == 6) begin
+                            o57 <= o57 + result3;
+                            o66 <= o66 + result7;
+                            o75 <= o75 + result11;
+                            o88 <= result15;
+                        end else if (r_count2 == 7) begin
+                            o58 <= o58 + result3;
+                            o67 <= o67 + result7;
+                            o76 <= o76 + result11;
+                            o85 <= o85 + result15;
+                            r_flag <=5;
+                        end
+                    end if(r_flag == 5)begin
+                        if(r_count2 == 0) begin
+                            o68 <= o68 + result7;
+                            o77 <= o77 + result11;
+                            o86 <= o86 + result15;
+                        end else if (r_count2 == 1) begin
+                            o78 <= o78 + result11;
+                            o87 <= o87 + result15;
+                        end else if (r_count2 == 2) begin
+                            o88 <= o88 + result15;
+                        end else if (r_count2 == 3) begin
+                        end else if (r_count2 == 4) begin
+                        end else if (r_count2 == 5) begin
+                        end else if (r_count2 == 6) begin
+                        end else if (r_count2 == 7) begin
+                            r_flag <=6;
+                        end
+                    end
                 end
             endcase
         end
     end
 
+    always @(posedge CLK or negedge RSTN) begin
+        if(r_flag == 6)begin
+            addo <= addo +1;
+        end
+    end
 
-
-
+    assign EN_O = (r_flag==6) ? 1 : 0;
+    assign RW_O = (r_flag==6) ? 1 : 0;
+    assign ADDR_O   =   addo;
+    assign WDATA_O  =   (ADDR_O == 0) ?  {o11,o12,o13,o14}   :
+                        (ADDR_O == 1) ?  {o15,o16,o17,o18}   :
+                        (ADDR_O == 2) ?  {o21,o22,o23,o24}   :
+                        (ADDR_O == 3) ?  {o25,o26,o27,o28}   :
+                        (ADDR_O == 4) ?  {o31,o32,o33,o34}   :
+                        (ADDR_O == 5) ?  {o35,o36,o37,o38}   :
+                        (ADDR_O == 6) ?  {o41,o42,o43,o44}   :
+                        (ADDR_O == 7) ?  {o45,o46,o47,o48}   :
+                        (ADDR_O == 8) ?  {o51,o52,o53,o54}   :
+                        (ADDR_O == 9) ?  {o55,o56,o56,o57}   :
+                        (ADDR_O == 10) ? {o61,o62,o63,o64}   :
+                        (ADDR_O == 11) ? {o65,o66,o67,o68}   :
+                        (ADDR_O == 12) ? {o71,o72,o73,o74}   :
+                        (ADDR_O == 13) ? {o75,o76,o77,o78}   :
+                        (ADDR_O == 14) ? {o81,o82,o83,o84}   : {o85,o86,o87,o88};
 
 
 
