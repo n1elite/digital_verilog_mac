@@ -40,8 +40,8 @@ module macarray (
 
     wire [3:0] cal_case;
 
-    wire [2:0] N_first, N_second;
-
+    wire [2:0] N_first, N_second, N_choice;
+    
 
     reg [7:0] a11, a12, a13, a14;
     reg [7:0] a21, a22, a23, a24;
@@ -85,6 +85,8 @@ module macarray (
     reg EN_row13, EN_row23, EN_row33, EN_row43;
     reg EN_row14, EN_row24, EN_row34, EN_row44;
 
+    reg [3:0] timing;
+
     reg control_start;
     reg EN_I_read;
     reg EN_W_read;
@@ -97,6 +99,7 @@ module macarray (
 
     assign N_first  =   (N < 5) ?   N   :   4;
     assign N_second =   (N < 5) ?   0   :   N-4;
+    assign N_choice =   (N_flag == 0)   ?   N_first :   N_second;
 
 
     assign cal_case =   (N < 5) ? ((T < 5) ? ((M < 5) ? 0 : 1) : ((M < 5) ? 2 : 3)) : ((T < 5) ? ((M < 5) ? 4 : 5) : ((M < 5) ? 6 : 7));
@@ -190,43 +193,58 @@ module macarray (
             EN_row14 <= 0; EN_row24 <= 0; EN_row34 <= 0; EN_row44 <= 0;
 
 
-
+            timing <= 0;
 
         end
     end
 
     always @(posedge CLK or negedge RSTN) begin
-        if(EN_I_read == 1) begin
-            EN_row12 <= 0;
-            EN_row22 <= 0;
-            EN_row32 <= 0;
-            EN_row42 <= 0;
+        if(cal_fin) begin
+            if(timing != N_choice +4) begin
+                timing <= timing +1;
+            end
+        end
+        if (timing < N_choice + 1)begin
+            if(EN_I_read == 1) begin
+                EN_row12 <= 0;
+                EN_row22 <= 0;
+                EN_row32 <= 0;
+                EN_row42 <= 0;
 
-            EN_row13 <= 0;
-            EN_row23 <= 0;
-            EN_row33 <= 0;
-            EN_row43 <= 0;
+                EN_row13 <= 0;
+                EN_row23 <= 0;
+                EN_row33 <= 0;
+                EN_row43 <= 0;
 
-            EN_row14 <= 0;
-            EN_row24 <= 0;
-            EN_row34 <= 0;
-            EN_row44 <= 0;
+                EN_row14 <= 0;
+                EN_row24 <= 0;
+                EN_row34 <= 0;
+                EN_row44 <= 0;
 
-        end else if (EN_I_read == 0) begin
-            EN_row12 <= EN_row11;
-            EN_row22 <= EN_row21;
-            EN_row32 <= EN_row31;
-            EN_row42 <= EN_row41;
+            end else if (EN_I_read == 0) begin
+                EN_row12 <= EN_row11;
+                EN_row22 <= EN_row21;
+                EN_row32 <= EN_row31;
+                EN_row42 <= EN_row41;
 
-            EN_row13 <= EN_row12;
-            EN_row23 <= EN_row22;
-            EN_row33 <= EN_row32;
-            EN_row43 <= EN_row42;
+                EN_row13 <= EN_row12;
+                EN_row23 <= EN_row22;
+                EN_row33 <= EN_row32;
+                EN_row43 <= EN_row42;
 
-            EN_row14 <= EN_row13;
-            EN_row24 <= EN_row23;
-            EN_row34 <= EN_row33;
-            EN_row44 <= EN_row43;
+                EN_row14 <= EN_row13;
+                EN_row24 <= EN_row23;
+                EN_row34 <= EN_row33;
+                EN_row44 <= EN_row43;
+            end
+        end else if (timing == N_choice + 1) begin
+            EN_row14 <= 1;
+        end else if (timing == N_choice + 2) begin
+            EN_row24 <= 1;
+        end else if (timing == N_choice + 3) begin
+            EN_row34 <= 1;
+        end else if (timing == N_choice + 4) begin
+            EN_row44 <= 1;
         end
     end
 
