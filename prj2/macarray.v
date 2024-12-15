@@ -80,7 +80,10 @@ module macarray (
 
     reg stop_flag;
 
-    reg EN_row1, EN_row2, EN_row3, EN_row4;  //1되면 못읽도록 하기
+    reg EN_row11, EN_row21, EN_row31, EN_row41;  //1되면 못읽도록 하기
+    reg EN_row12, EN_row22, EN_row32, EN_row42;
+    reg EN_row13, EN_row23, EN_row33, EN_row43;
+    reg EN_row14, EN_row24, EN_row34, EN_row44;
 
     reg control_start;
     reg EN_I_read;
@@ -177,12 +180,39 @@ module macarray (
 
             EN_I_read <= 1;
 	        EN_W_read <= 1;
-            EN_row1 <= 0;
-            EN_row2 <= 0;
-            EN_row3 <= 0;
-            EN_row4 <= 0;
+            EN_row11 <= 0;
+            EN_row21 <= 0;
+            EN_row31 <= 0;
+            EN_row41 <= 0;
+
+            EN_row12 <= 0; EN_row22 <= 0; EN_row32 <= 0; EN_row42 <= 0;
+            EN_row13 <= 0; EN_row23 <= 0; EN_row33 <= 0; EN_row43 <= 0;
+            EN_row14 <= 0; EN_row24 <= 0; EN_row34 <= 0; EN_row44 <= 0;
+
+
+
+
         end
     end
+
+    always @(posedge CLK or negedge RSTN) begin
+        EN_row12 <= EN_row11;
+        EN_row22 <= EN_row21;
+        EN_row32 <= EN_row31;
+        EN_row42 <= EN_row41;
+
+        EN_row13 <= EN_row12;
+        EN_row23 <= EN_row22;
+        EN_row33 <= EN_row32;
+        EN_row43 <= EN_row42;
+
+        EN_row14 <= EN_row13;
+        EN_row24 <= EN_row23;
+        EN_row34 <= EN_row33;
+        EN_row44 <= EN_row43;
+    end
+
+
    
     always @(posedge CLK or negedge RSTN) begin
     	if(START) begin
@@ -746,36 +776,36 @@ module macarray (
                                 if (EN_I_read == 1)begin
                                     {a11, a12, a13, a14} <= RDATA_I[63:32];
                                     {EN11, EN12, EN13, EN14} <= 4'b0000;
-                                    EN_row1 <= 0;
+                                    EN_row14 <= 0;
                                 end else begin
-                                    EN_row1 <= 1;
+                                    EN_row11 <= 1;
                                 end
                             end
                             1   :   begin
                                 if (EN_I_read == 1)begin
                                     {a21, a22, a23, a24} <= RDATA_I[63:32];
                                     {EN21, EN22, EN23, EN24} <= 4'b0000;
-                                    EN_row2 <= 0;
+                                    EN_row24 <= 0;
                                 end else begin
-                                    EN_row2 <= 1;
+                                    EN_row21 <= 1;
                                 end
                             end 
                             2   :   begin
                                 if (EN_I_read == 1)begin
                                     {a31, a32, a33, a34} <= RDATA_I[63:32];
                                     {EN31, EN32, EN33, EN34} <= 4'b0000;
-                                    EN_row3 <= 0;
+                                    EN_row34 <= 0;
                                 end else begin
-                                    EN_row3 <= 1;
+                                    EN_row31 <= 1;
                                 end
                             end 
                             3   :   begin
                                 if (EN_I_read == 1)begin
                                     {a41, a42, a43, a44} <= RDATA_I[63:32];
                                     {EN41, EN42, EN43, EN44} <= 4'b0000;
-                                    EN_row4 <= 0;
+                                    EN_row44 <= 0;
                                 end else begin
-                                    EN_row4 <= 1;
+                                    EN_row41 <= 1;
                                 end
                             end
                         endcase
@@ -787,36 +817,36 @@ module macarray (
                                 if (EN_I_read == 1)begin
                                     {a12, a13, a14} <= RDATA_I[63:40];
                                     {EN11, EN12, EN13, EN14} <= 4'b1000;
-                                    EN_row1 <= 0;
+                                    EN_row14 <= 0;
                                 end else begin
-                                    EN_row1 <= 1;
+                                    EN_row11 <= 1;
                                 end
                             end
                             1   :   begin
                                 if (EN_I_read == 1)begin
                                     {a22, a23, a24} <= RDATA_I[63:40];
                                     {EN21, EN22, EN23, EN24} <= 4'b1000;
-                                    EN_row2 <= 0;
+                                    EN_row24 <= 0;
                                 end else begin
-                                    EN_row2 <= 1;
+                                    EN_row21 <= 1;
                                 end
                             end 
                             2   :   begin
                                 if (EN_I_read == 1)begin
                                     {a32, a33, a34} <= RDATA_I[63:40];
                                     {EN31, EN32, EN33, EN34} <= 4'b1000;
-                                    EN_row3 <= 0;
+                                    EN_row34 <= 0;
                                 end else begin
-                                    EN_row3 <= 1;
+                                    EN_row31 <= 1;
                                 end
                             end
                             3   :   begin
                                 if (EN_I_read == 1)begin
                                     {a42, a43, a44} <= RDATA_I[63:40];
                                     {EN41, EN42, EN43, EN44} <= 4'b1000;
-                                    EN_row4 <= 0;
+                                    EN_row44 <= 0;
                                 end else begin
-                                    EN_row4 <= 1;
+                                    EN_row41 <= 1;
                                 end
                             end
                         endcase
@@ -828,36 +858,36 @@ module macarray (
                                 if (EN_I_read == 1)begin
                                     {a13, a14} <= RDATA_I[63:48];
                                     {EN11, EN12, EN13, EN14} <= 4'b1100;
-                                    EN_row1 <= 0;
+                                    EN_row14 <= 0;
                                 end else begin
-                                    EN_row1 <= 1;
+                                    EN_row11 <= 1;
                                 end
                             end
                             1   :   begin
                                 if (EN_I_read == 1)begin
                                     {a23, a24} <= RDATA_I[63:48];
                                     {EN21, EN22, EN23, EN24} <= 4'b1100;
-                                    EN_row2 <= 0;
+                                    EN_row24 <= 0;
                                 end else begin
-                                    EN_row2 <= 1;
+                                    EN_row21 <= 1;
                                 end 
                             end
                             2   :   begin
                                 if (EN_I_read == 1)begin
                                     {a33, a34} <= RDATA_I[63:48];
                                     {EN31, EN32, EN33, EN34} <= 4'b1100;
-                                    EN_row3 <= 0;
+                                    EN_row34 <= 0;
                                 end else begin
-                                    EN_row3 <= 1;
+                                    EN_row31 <= 1;
                                 end
                             end
                             3   :   begin
                                 if (EN_I_read == 1)begin
                                     {a43, a44} <= RDATA_I[63:48];
                                     {EN41, EN42, EN43, EN44} <= 4'b1100;
-                                    EN_row4 <= 0;
+                                    EN_row44 <= 0;
                                 end else begin
-                                    EN_row4 <= 1;
+                                    EN_row41 <= 1;
                                 end
                             end
                         endcase
@@ -869,36 +899,36 @@ module macarray (
                                 if (EN_I_read == 1)begin
                                     {a14} <= RDATA_I[63:56];
                                     {EN11, EN12, EN13, EN14} <= 4'b1110;
-                                    EN_row1 <= 0;
+                                    EN_row14 <= 0;
                                 end else begin
-                                    EN_row1 <= 1;
+                                    EN_row11 <= 1;
                                 end
                             end
                             1   :   begin
                                 if (EN_I_read == 1)begin
                                     {a24} <= RDATA_I[63:56];
                                     {EN21, EN22, EN23, EN24} <= 4'b1110;
-                                    EN_row2 <= 0;
+                                    EN_row24 <= 0;
                                 end else begin
-                                    EN_row2 <= 1;
+                                    EN_row21 <= 1;
                                 end
                             end
                             2   :   begin
                                 if (EN_I_read == 1)begin
                                     {a34} <= RDATA_I[63:56];
                                     {EN31, EN32, EN33, EN34} <= 4'b1110;
-                                    EN_row3 <= 0;
+                                    EN_row34 <= 0;
                                 end else begin
-                                    EN_row3 <= 1;
+                                    EN_row31 <= 1;
                                 end
                             end
                             3   :   begin
                                 if (EN_I_read == 1)begin
                                     {a44} <= RDATA_I[63:56];
                                     {EN41, EN42, EN43, EN44} <= 4'b1110;
-                                    EN_row4 <= 0;
+                                    EN_row44 <= 0;
                                 end else begin
-                                    EN_row4 <= 1;
+                                    EN_row41 <= 1;
                                 end
                             end
                         endcase
@@ -913,36 +943,36 @@ module macarray (
                                 if (EN_I_read == 1)begin
                                     {a11, a12, a13, a14} <= RDATA_I[31:0];
                                     {EN11, EN12, EN13, EN14} <= 4'b0000;
-                                    EN_row1 <= 0;
+                                    EN_row14 <= 0;
                                 end else begin
-                                    EN_row1 <= 1;
+                                    EN_row11 <= 1;
                                 end
                             end
                             1   :   begin
                                 if (EN_I_read == 1)begin
                                     {a21, a22, a23, a24} <= RDATA_I[31:0];
                                     {EN21, EN22, EN23, EN24} <= 4'b0000;
-                                    EN_row2 <= 0;
+                                    EN_row24 <= 0;
                                 end else begin
-                                    EN_row2 <= 1;
+                                    EN_row21 <= 1;
                                 end
                             end
                             2   :   begin
                                 if (EN_I_read == 1)begin
                                     {a31, a32, a33, a34} <= RDATA_I[31:0];
                                     {EN31, EN32, EN33, EN34} <= 4'b0000;
-                                    EN_row3 <= 0;
+                                    EN_row34 <= 0;
                                 end else begin
-                                    EN_row3 <= 1;
+                                    EN_row31 <= 1;
                                 end
                             end
                             3   :   begin
                                 if (EN_I_read == 1)begin
                                     {a41, a42, a43, a44} <= RDATA_I[31:0];
                                     {EN41, EN42, EN43, EN44} <= 4'b0000;
-                                    EN_row4 <= 0;
+                                    EN_row44 <= 0;
                                 end else begin
-                                    EN_row4 <= 1;
+                                    EN_row41 <= 1;
                                 end
                             end
                         endcase
@@ -954,36 +984,36 @@ module macarray (
                                 if (EN_I_read == 1)begin
                                     {a12, a13, a14} <= RDATA_I[31:8];
                                     {EN11, EN12, EN13, EN14} <= 4'b1000;
-                                    EN_row1 <= 0;
+                                    EN_row14 <= 0;
                                 end else begin
-                                    EN_row1 <= 1;
+                                    EN_row11 <= 1;
                                 end
                             end
                             1   :   begin
                                 if (EN_I_read == 1)begin
                                     {a22, a23, a24} <= RDATA_I[31:8];
                                     {EN21, EN22, EN23, EN24} <= 4'b1000;
-                                    EN_row2 <= 0;
+                                    EN_row24 <= 0;
                                 end else begin
-                                    EN_row2 <= 1;
+                                    EN_row21 <= 1;
                                 end 
                             end
                             2   :   begin
                                 if (EN_I_read == 1)begin
                                     {a32, a33, a34} <= RDATA_I[31:8];
                                     {EN31, EN32, EN33, EN34} <= 4'b1000;
-                                    EN_row3 <= 0;
+                                    EN_row34 <= 0;
                                 end else begin
-                                    EN_row3 <= 1;
+                                    EN_row31 <= 1;
                                 end
                             end
                             3   :   begin
                                 if (EN_I_read == 1)begin
                                     {a42, a43, a44} <= RDATA_I[31:8];
                                     {EN41, EN42, EN43, EN44} <= 4'b1000;
-                                    EN_row4 <= 0;
+                                    EN_row44 <= 0;
                                 end else begin
-                                    EN_row4 <= 1;
+                                    EN_row41 <= 1;
                                 end
                             end
                         endcase
@@ -995,36 +1025,36 @@ module macarray (
                                 if (EN_I_read == 1)begin
                                     {a13, a14} <= RDATA_I[31:16];
                                     {EN11, EN12, EN13, EN14} <= 4'b1100;
-                                    EN_row1 <= 0;
+                                    EN_row14 <= 0;
                                 end else begin
-                                    EN_row1 <= 1;
+                                    EN_row11 <= 1;
                                 end
                             end
                             1   :   begin
                                 if (EN_I_read == 1)begin
                                     {a23, a24} <= RDATA_I[31:16];
                                     {EN21, EN22, EN23, EN24} <= 4'b1100;
-                                    EN_row2 <= 0;
+                                    EN_row24 <= 0;
                                 end else begin
-                                    EN_row2 <= 1;
+                                    EN_row21 <= 1;
                                 end
                             end
                             2   :   begin
                                 if (EN_I_read == 1)begin
                                     {a33, a34} <= RDATA_I[31:16];
                                     {EN31, EN32, EN33, EN34} <= 4'b1100;
-                                    EN_row3 <= 0;
+                                    EN_row34 <= 0;
                                 end else begin
-                                    EN_row3 <= 1;
+                                    EN_row31 <= 1;
                                 end
                             end
                             3   :   begin
                                 if (EN_I_read == 1)begin
                                     {a43, a44} <= RDATA_I[31:16];
                                     {EN41, EN42, EN43, EN44} <= 4'b1100;
-                                    EN_row4 <= 0;
+                                    EN_row44 <= 0;
                                 end else begin
-                                    EN_row4 <= 1;
+                                    EN_row41 <= 1;
                                 end
                             end
                         endcase
@@ -1036,36 +1066,36 @@ module macarray (
                                 if (EN_I_read == 1)begin
                                     {a14} <= RDATA_I[31:24];
                                     {EN11, EN12, EN13, EN14} <= 4'b1110;
-                                    EN_row1 <= 0;
+                                    EN_row14 <= 0;
                                 end else begin
-                                    EN_row1 <= 1;
+                                    EN_row11 <= 1;
                                 end
                             end
                             1   :   begin
                                 if (EN_I_read == 1)begin
                                     {a24} <= RDATA_I[31:24];
                                     {EN21, EN22, EN23, EN24} <= 4'b1110;
-                                    EN_row2 <= 0;
+                                    EN_row24 <= 0;
                                 end else begin
-                                    EN_row2 <= 1;
+                                    EN_row21 <= 1;
                                 end
                             end
                             2   :   begin
                                 if (EN_I_read == 1)begin
                                     {a34} <= RDATA_I[31:24];
                                     {EN31, EN32, EN33, EN34} <= 4'b1110;
-                                    EN_row3 <= 0;
+                                    EN_row34 <= 0;
                                 end else begin
-                                    EN_row3 <= 1;
+                                    EN_row31 <= 1;
                                 end
                             end
                             3   :   begin
                                 if (EN_I_read == 1)begin
                                     {a44} <= RDATA_I[31:24];
                                     {EN41, EN42, EN43, EN44} <= 4'b1110;
-                                    EN_row4 <= 0;
+                                    EN_row44 <= 0;
                                 end else begin
-                                    EN_row4 <= 1;
+                                    EN_row41 <= 1;
                                 end
                             end
                         endcase
@@ -1101,9 +1131,9 @@ module macarray (
 
 
 
-    reg w21, w22, w23, w24;
-    reg w31, w32, w33, w34;
-    reg w41, w42, w43, w44;
+    reg [7:0] w21, w22, w23, w24;
+    reg [7:0] w31, w32, w33, w34;
+    reg [7:0] w41, w42, w43, w44;
 
 
 
@@ -1180,22 +1210,22 @@ module macarray (
             
 
 
-            if (EN_row1 == 0 && EN11 == 0 && WEN11 == 0) begin
+            if (EN_row14 == 0 && EN11 == 0 && WEN11 == 0) begin
 			    result1  <=     0      + multi1;
             end else begin
                 result1 <= 0;
             end
-            if (EN_row1 == 0 && EN12 == 0 && WEN12 == 0) begin
+            if (EN_row14 == 0 && EN12 == 0 && WEN12 == 0) begin
 			    result2  <=  result1   + multi2;
             end else begin
                 result2 <= 0;
             end
-            if (EN_row1 == 0 && EN13 == 0 && WEN13 == 0) begin
+            if (EN_row14 == 0 && EN13 == 0 && WEN13 == 0) begin
 			    result3  <=  result2   + multi3;
             end else begin
                 result3 <= 0;
             end
-            if (EN_row1 == 0 && EN14 == 0 && WEN14 == 0) begin
+            if (EN_row14 == 0 && EN14 == 0 && WEN14 == 0) begin
 			    result4  <=  result3   + multi4;
             end else begin
                 result4 <= 0;
@@ -1203,22 +1233,22 @@ module macarray (
 
             
 
-            if (EN_row2 == 0 && EN21 == 0 && OWEN21 == 0) begin
+            if (EN_row24 == 0 && EN21 == 0 && OWEN21 == 0) begin
 			    result5  <=     0      + multi5;
             end else begin
                 result5 <= 0;
             end
-            if (EN_row2 == 0 && EN22 == 0 && OWEN22 == 0) begin
+            if (EN_row24 == 0 && EN22 == 0 && OWEN22 == 0) begin
 			    result6  <=  result5   + multi6;
             end else begin
                 result6 <= 0;
             end
-            if (EN_row2 == 0 && EN23 == 0 && OWEN23 == 0) begin
+            if (EN_row24 == 0 && EN23 == 0 && OWEN23 == 0) begin
 			    result7  <=  result6   + multi7;
             end else begin
                 result7 <= 0;
             end
-            if (EN_row2 == 0 && EN24 == 0 && OWEN24 == 0) begin
+            if (EN_row24 == 0 && EN24 == 0 && OWEN24 == 0) begin
 			    result8  <=  result7   + multi8;
             end else begin
                 result8 <= 0;
@@ -1227,22 +1257,22 @@ module macarray (
 
 
 
-            if (EN_row3 == 0 && EN31 == 0 && OWEN31 == 0) begin
+            if (EN_row34 == 0 && EN31 == 0 && OWEN31 == 0) begin
 			    result9  <=     0      + multi9;
             end else begin
                 result9 <= 0;
             end
-            if (EN_row3 == 0 && EN32 == 0 && OWEN32 == 0) begin
+            if (EN_row34 == 0 && EN32 == 0 && OWEN32 == 0) begin
 			    result10 <=  result9   + multi10;
             end else begin
                 result10 <= 0;
             end
-            if (EN_row3 == 0 && EN33 == 0 && OWEN33 == 0) begin
+            if (EN_row34 == 0 && EN33 == 0 && OWEN33 == 0) begin
 			    result11 <=  result10  + multi11;
             end else begin
                 result11 <= 0;
             end
-            if (EN_row3 == 0 && EN34 == 0 && OWEN34 == 0) begin
+            if (EN_row34 == 0 && EN34 == 0 && OWEN34 == 0) begin
 			    result12 <=  result11  + multi12;
             end else begin
                 result12 <= 0;
@@ -1252,22 +1282,22 @@ module macarray (
             
             
             
-            if (EN_row4 == 0 && EN41 == 0 && OWEN41 == 0) begin
+            if (EN_row44 == 0 && EN41 == 0 && OWEN41 == 0) begin
 			    result13 <=     0      + multi13;
             end else begin
                 result13 <= 0;
             end
-            if (EN_row4 == 0 && EN42 == 0 && OWEN42 == 0) begin
+            if (EN_row44 == 0 && EN42 == 0 && OWEN42 == 0) begin
 			    result14 <=  result13  + multi14;
             end else begin
                 result14 <= 0;
             end
-            if (EN_row4 == 0 && EN43 == 0 && OWEN43 == 0) begin
+            if (EN_row44 == 0 && EN43 == 0 && OWEN43 == 0) begin
 			    result15 <=  result14  + multi15;
             end else begin
                 result15 <= 0;
             end
-            if (EN_row4 == 0 && EN44 == 0 && OWEN44 == 0) begin
+            if (EN_row44 == 0 && EN44 == 0 && OWEN44 == 0) begin
 			    result16 <=  result15  + multi16;
             end else begin
                 result16 <= 0;
@@ -1277,6 +1307,61 @@ module macarray (
         end
     end
 
+
+    reg [1:0] r_count1;
+    reg [3:0] r_count2;
+    reg r_flag;
+
+
+    always @(posedge CLK or negedge RSTN) begin
+        if(~RSTN) begin
+            r_count1 <= 0;
+            r_count2 <= 0;
+            r_flag <= 0;
+
+        end
+    end
+
+    always @(posedge CLK or negedge RSTN) begin
+        if(control_start) begin
+            case (cal_case)
+                0: begin
+                    r_count1 <= r_count1 + 1;
+                    if(r_flag == 0)begin
+                        if(r_count1 == 1)begin
+                            r_flag <= 1;
+                        end
+                    end else if (r_flag == 1) begin
+                        if(r_count1 == 1)begin
+
+                        end
+                    end
+
+                end
+                1: begin
+                    r_count1 <= r_count1 + 1;
+                end
+                2: begin
+                    r_count1 <= r_count1 + 1;
+                end
+                3: begin
+                    r_count1 <= r_count1 + 1;
+                end
+                4: begin
+                    r_count2 <= r_count2 + 1;
+                end
+                5: begin
+                    r_count2 <= r_count2 + 1;
+                end
+                6: begin
+                    r_count2 <= r_count2 + 1;
+                end
+                7: begin
+                    r_count2 <= r_count2 + 1;
+                end
+            endcase
+        end
+    end
 
 
 
