@@ -58,8 +58,11 @@ module macarray (
     reg  EN21, EN22, EN23, EN24;
     reg  EN31, EN32, EN33, EN34;
     reg  EN41, EN42, EN43, EN44;
-
-
+	
+    reg WEN11, WEN12, WEN13, WEN14;
+    reg WEN22, WEN23, WEN24;
+    reg WEN33, WEN34;
+    reg WEN44;
 
     reg [2:0] read_input_line;
     reg [2:0] read_weight_line;
@@ -70,8 +73,8 @@ module macarray (
 
     reg N_flag, N_flag2;
     reg T_flag;
-    reg M_flag;
-    reg my_falg;
+    reg M_flag, M_flag2;
+    reg my_flag;
     reg [2:0] cal_count, cal_count2;
     reg cal_fin, cal_fin2;
     reg [3:0] six_count; 
@@ -132,6 +135,11 @@ module macarray (
     	    wb22 <= 0; wb23 <= 0; wb24 <= 0;
     	    wb11 <= 0; wb12 <= 0; wb13 <=0; wb14 <= 0;
 
+	    WEN11<=0; WEN12<=0; WEN13<=0; WEN14<=0;
+    	    WEN22<=0; WEN23<=0; WEN23<=0;
+    	    WEN33<=0; WEN34<=0;
+    	    WEN44<=0;
+
             EN11 <= 0;
             EN12 <= 0;
             EN13 <= 0;
@@ -159,6 +167,7 @@ module macarray (
 	    N_flag2 <= 0;
             T_flag <= 0;
             M_flag <= 0;
+	    M_flag2 <= 0;
 	    my_flag <= 0;
             cal_count <= 0;
 	    cal_count2 <= 0;
@@ -179,6 +188,24 @@ module macarray (
             EN_row4 <= 0;
         end
     end
+   
+    always @(posedge CLK or negedge RSTN) begin
+    	if(START) begin
+		WEN12 <= WEN22;
+		WEN23 <= WEN33;
+		WEN13 <= WEN23;
+		WEN34 <= WEN44;
+		WEN24 <= WEN34;
+		WEN14 <= WEN24;
+	
+		 	if (cal_count2 + 1 == M) begin
+				WEN11 <= 1; WEN22 <= 1; WEN33 <= 1; WEN44 <= 1; 
+			end else begin
+				WEN11 <= 0; WEN22 <= 0; WEN33 <= 0; WEN44 <= 0; 
+			end
+		
+	end	
+    end
 
     always @(posedge CLK or negedge RSTN) begin
     	if(START) begin
@@ -193,44 +220,44 @@ module macarray (
 				if(N==4) begin
 					{wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
 				end else if (N==3) begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[63:40]};
+					{wb22, wb33, wb44} <= {RDATA_W[63:40]};
 				end else if (N==2) begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[63:48]};
+					{wb33, wb44} <= {RDATA_W[63:48]};
 				end else begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[63:56]};
+					{wb44} <= {RDATA_W[63:56]};
 				end
 			end	
 			1 : begin
 				if(N==4) begin
 					{wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
 				end else if (N==3) begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[63:40]};
+					{wb22, wb33, wb44} <= {RDATA_W[63:40]};
 				end else if (N==2) begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[63:48]};
+					{wb33, wb44} <= {RDATA_W[63:48]};
 				end else begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[63:56]};
+					{wb44} <= {RDATA_W[63:56]};
 				end
 			end	
 			2 : begin
 				if(N==4) begin
 					{wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
 				end else if (N==3) begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[63:40]};
+					{wb22, wb33, wb44} <= {RDATA_W[63:40]};
 				end else if (N==2) begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[63:48]};
+					{wb33, wb44} <= {RDATA_W[63:48]};
 				end else begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[63:56]};
+					{wb44} <= {RDATA_W[63:56]};
 				end
 			end	
 			3 : begin
 				if(N==4) begin
 					{wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
 				end else if (N==3) begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[63:40]};
+					{wb22, wb33, wb44} <= {RDATA_W[63:40]};
 				end else if (N==2) begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[63:48]};
+					{wb33, wb44} <= {RDATA_W[63:48]};
 				end else begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[63:56]};
+					{wb44} <= {RDATA_W[63:56]};
 				end
 			end	
 			4 : begin
@@ -241,15 +268,15 @@ module macarray (
 				end else if (N==7 & N_flag == 0) begin
 					{wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
 				end else if(N==7 && N_flag == 1) begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[31:8]};
+					{wb22, wb33, wb44} <= {RDATA_W[31:8]};
 				end else if(N==6 & N_flag == 0) begin
 					{wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
 				end else if(N==6 && N_flag == 1) begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[31:16]};
+					{wb33, wb44} <= {RDATA_W[31:16]};
 				end else if(N==5 & N_flag == 0) begin
 					{wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
 				end else if(N==5 && N_flag == 1) begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[31:24]};
+					{wb44} <= {RDATA_W[31:24]};
 				end
 			end	
 			5 : begin
@@ -260,15 +287,15 @@ module macarray (
 				end else if (N==7 & N_flag == 0) begin
 					{wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
 				end else if(N==7 && N_flag == 1) begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[31:8]};
+					{wb22, wb33, wb44} <= {RDATA_W[31:8]};
 				end else if(N==6 & N_flag == 0) begin
 					{wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
 				end else if(N==6 && N_flag == 1) begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[31:16]};
+					{wb33, wb44} <= {RDATA_W[31:16]};
 				end else if(N==5 & N_flag == 0) begin
 					{wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
 				end else if(N==5 && N_flag == 1) begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[31:24]};
+					{wb44} <= {RDATA_W[31:24]};
 				end
 			end	
 			6 : begin
@@ -279,15 +306,15 @@ module macarray (
 				end else if (N==7 & N_flag == 0) begin
 					{wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
 				end else if(N==7 && N_flag == 1) begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[31:8]};
+					{wb22, wb33, wb44} <= {RDATA_W[31:8]};
 				end else if(N==6 & N_flag == 0) begin
 					{wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
 				end else if(N==6 && N_flag == 1) begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[31:16]};
+					{wb33, wb44} <= {RDATA_W[31:16]};
 				end else if(N==5 & N_flag == 0) begin
 					{wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
 				end else if(N==5 && N_flag == 1) begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[31:24]};
+					{wb44} <= {RDATA_W[31:24]};
 				end
 			end	
 			7 : begin
@@ -298,15 +325,15 @@ module macarray (
 				end else if (N==7 & N_flag == 0) begin
 					{wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
 				end else if(N==7 && N_flag == 1) begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[31:8]};
+					{wb22, wb33, wb44} <= {RDATA_W[31:8]};
 				end else if(N==6 & N_flag == 0) begin
 					{wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
 				end else if(N==6 && N_flag == 1) begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[31:16]};
+					{wb33, wb44} <= {RDATA_W[31:16]};
 				end else if(N==5 & N_flag == 0) begin
 					{wb11, wb22, wb33, wb44} <= {RDATA_W[63:32]};
 				end else if(N==5 && N_flag == 1) begin
-					{wb11, wb22, wb33, wb44} <= {0, RDATA_W[31:24]};
+					{wb44} <= {RDATA_W[31:24]};
 				end
 			end
 		endcase	
@@ -320,7 +347,7 @@ module macarray (
 		if(stop_flag2 == 1)
 			EN_W_read <= 0;
 		else 
-			EN_W_read <= 0;
+			EN_W_read <= 1;
 		case(cal_case)
 			0 : begin
 				 if (cal_fin2 == 0) begin
@@ -348,7 +375,7 @@ module macarray (
 					read_weight_line <=  read_weight_line + 1;
                     			if (cal_count2 + 1 == M && M<4) begin
                         			stop_flag2 <= 1;
-                    			else if (cal_count2 == 3 && M_flag == 0) begin
+                    			end else if (cal_count2 == 3 && M_flag == 0) begin
 						stop_flag2 <= 0; M_flag <= 1;
 					end else if(cal_count2 == 3 && M_flag == 1) begin
 						cal_fin2 <= 1;
@@ -376,10 +403,8 @@ module macarray (
 				if(cal_fin2 == 0) begin
 					cal_count2 <= cal_count2 + 1;
 					read_weight_line <= read_weight_line + 1;
-					if(cal_count2 + 1 == M && M<4) begin
-						stop_flag2 <= 1;
-					end else if(cal_count2 == 3 && N_flag2 == 0) begin
-						stop_flag2 <= 0; read_weight_line <= 0; N_flag2 <= 1;
+					if(cal_count2 == 3 && N_flag2 == 0) begin
+						stop_flag2 <= 0; read_weight_line <= 0; N_flag2 <= 1; cal_count2 <= 0;
 					end else if(cal_count2 == 3 && N_flag2 == 1) begin
 						cal_fin2 <= 1;
 					end
@@ -389,15 +414,11 @@ module macarray (
 				if(cal_fin2 == 0) begin
 					cal_count2 <= cal_count2 + 1;
 					read_weight_line <= read_weight_line + 1;
-					if(cal_count2 + 1 == M && M<8) begin
-						stop_flag2 <= 1;
-					end else if (cal_count2 == 3 && N_flag2 == 0) begin
-						read_weight_line <= 0; N_flag2 <= 1;
-					end else if (cal_count2 == 3 && N_flag2 == 1) begin
-						N_flag2 <= 0;
-					end else if (cal_count2 == 7 && N_flag2 == 0) begin
-						stop_flag2 <= 0; read_weight_line <= 4; N_flag <= 1;
-					end else if (cal_count2 == 7 && N_flag2 == 1) begin
+					if (cal_count2 == 3 && N_flag2 == 0) begin
+						read_weight_line <= 0; N_flag2 <= 1; cal_count2 <= 0;
+					end else if (cal_count2 == 7 && N_flag2 == 1 && M_flag2 == 0) begin
+						read_weight_line <= 4; N_flag <= 1; cal_count2 <= 4; M_flag2 <= 1; 
+					end else if (cal_count2 == 7 && N_flag2 == 1 && M_flag2 == 1) begin
 						cal_fin2 <= 1;
 					end
 				end
@@ -405,32 +426,31 @@ module macarray (
 			6 : begin
 				if(cal_fin2 == 0) begin
 					cal_count2 <= cal_count2 + 1;
-					six_count <= six_count + 1;
 					read_weight_line <= read_weight_line + 1;
-					if(cal_count2 + 1 == M && M<4)
-						stop_flag2 <= 1;
-					else if(cal_count2 == 3 && (six_count == 3 | six_count == 6 | six_count == 9)) begin
-						stop_flag2 <= 0; read_weight_line <= 0;
-					end else if (cal_count2 == 3 && six_count == 12)
-						cal_fin2 <= 1;
+					if(cal_count2 == 3 && N_flag2 == 0) begin
+						read_weight_line <= 0; cal_count2 <= 0; N_flag2 <= 1;
+					end else if (cal_count2 == 3 && N_flag2 == 1 && M_flag2 == 0) begin
+						read_weight_line <= 0; cal_count2 <= 0; N_flag2 <= 0; M_flag2 <= 1;
+					end else if (cal_count2 == 3 && N_flag2 == 1 && M_flag2 == 1)
+						cal_fin2 <= 1; 
 				end
 			end
 			7 : begin
 				if(cal_fin2 == 0) begin
 					cal_count2 <= cal_count2 + 1;
 					read_weight_line <= read_weight_line + 1;
-					if(cal_count2 + 1 == M && M<8)
-						stop_flag2 <= 1;
-					else if (cal_count2 == 7) 
-						stop_flag2 <= 0;
-					else if(cal_count2 == 3 && M_flag == 0) begin
-						read_weight_line <= 0; M_flag <= 1;
-					end else if(cal_count2 == 3 && M_flag == 1) begin
-						read_weight_line <= 4; N_flag2 <= 1; stop_flag2 <= 0;
-					end else if(cal_count2 == 3 && N_flag2 == 1) begin
-						read_weight_line <= 0; my_flag <= 1;
-					end else if(cal_count2 == 3 && my_flag == 1)
-						can_fin2 <= 1;
+					if(cal_count2 == 3 && M_flag2 == 0) begin
+						read_weight_line <= 0; M_flag2 <= 1; cal_count2 <= 0;
+					end else if(cal_count2 == 3 && M_flag2 == 1 && N_flag2 == 0) begin
+						read_weight_line <= 0; M_flag2 <= 0; N_flag2 <= 1; cal_count2 <= 0;
+					end else if (cal_count2 ==3 && M_flag2 == 1 && N_flag2 == 1) begin
+						M_flag2 <= 0; N_flag2 <= 0;
+					end else if(cal_count2 == 7 && M_flag2 == 0) begin
+						read_weight_line <= 4; M_flag2 <= 1; cal_count2 <= 4; 
+					end else if(cal_count2 == 7 && M_flag2 == 1 && N_flag2 == 0) begin
+						read_weight_line <= 4; M_flag2 <= 0; N_flag2 <= 1; cal_count2 <= 4;
+					end else if (cal_count2 == 7 && M_flag2 ==1 && N_flag2 == 1)
+						cal_fin2 <= 1;
 				end
 			end	
 		endcase	
