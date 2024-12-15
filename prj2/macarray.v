@@ -91,6 +91,7 @@ module macarray (
     reg EN_I_read;
     reg EN_W_read;
 
+    reg control_flag;
     //Variable Initialize
 
     assign M = MNT[11:8];
@@ -178,6 +179,7 @@ module macarray (
             cal_fin2 <= 0;
 
             stop_flag <= 0;
+	    control_flag <= 0;
 
             control_start <= 0;
 
@@ -236,14 +238,14 @@ module macarray (
                 EN_row24 <= EN_row23;
                 EN_row34 <= EN_row33;
                 EN_row44 <= EN_row43;
-            end
-        end else if (timing == N_choice + 1) begin
+	    end
+        end else if (timing == N_choice ) begin
             EN_row14 <= 1;
-        end else if (timing == N_choice + 2) begin
+        end else if (timing == N_choice + 1) begin
             EN_row24 <= 1;
-        end else if (timing == N_choice + 3) begin
+        end else if (timing == N_choice + 2) begin
             EN_row34 <= 1;
-        end else if (timing == N_choice + 4) begin
+        end else if (timing == N_choice + 3) begin
             EN_row44 <= 1;
         end
     end
@@ -815,7 +817,7 @@ module macarray (
                                     EN_row14 <= 0;
                                 end else begin
                                     EN_row11 <= 1;
-                                end
+                                end 
                             end
                             1   :   begin
                                 if (EN_I_read == 1)begin
@@ -1143,210 +1145,59 @@ module macarray (
     end
 
 
+   
 
 
 
 
-    // WRITE YOUR MAC_ARRAY DATAPATH CODE
-	reg [15:0] result1, result2, result3, result4;
-    reg [15:0] result5, result6, result7, result8;
-    reg [15:0] result9, result10, result11, result12;
-    reg [15:0] result13, result14, result15, result16;
+	wire [7:0] outp_south0, outp_south1, outp_south2, outp_south3, outp_south4, outp_south5, outp_south6, outp_south7 ;
+	wire [7:0] outp_south8, outp_south9, outp_south10, outp_south11, outp_south12, outp_south13, outp_south14, outp_south15;
+	wire [15:0] result0, result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12, result13, result14, result15;
+	wire OWEN11, OWEN12, OWEN13, OWEN14, OWEN21, OWEN22, OWEN23, OWEN24 , OWEN31, OWEN32, OWEN33, OWEN34, OWEN41, OWEN42, OWEN43, OWEN44; 
+	
+    // // WRITE YOUR MAC_ARRAY DATAPATH CODE
 
-
-
-	wire [15:0] multi1, multi2, multi3, multi4;
-    wire [15:0] multi5, multi6, multi7, multi8;
-    wire [15:0] multi9, multi10, multi11, multi12;
-    wire [15:0] multi13, multi14, multi15, multi16;
-
-
-    reg OWEN21, OWEN22, OWEN23, OWEN24;
-    reg OWEN31, OWEN32, OWEN33, OWEN34;
-    reg OWEN41, OWEN42, OWEN43, OWEN44;
-
-
-
-    reg [7:0] w21, w22, w23, w24;
-    reg [7:0] w31, w32, w33, w34;
-    reg [7:0] w41, w42, w43, w44;
-
-
-
-    assign multi1   =   a11 * wb11;
-    assign multi2   =   a12 * wb12;
-    assign multi3   =   a13 * wb13;
-    assign multi4   =   a14 * wb14;
-    assign multi5   =   a21 * w21;
-    assign multi6   =   a22 * w22;
-    assign multi7   =   a23 * w23;
-    assign multi8   =   a24 * w24;
-    assign multi9   =   a31 * w31;
-    assign multi10  =   a32 * w32;
-    assign multi11  =   a33 * w33;
-    assign multi12  =   a34 * w34;
-    assign multi13  =   a41 * w41;
-    assign multi14  =   a42 * w42;
-    assign multi15  =   a43 * w43;
-    assign multi16  =   a44 * w44;
-
-    always @(posedge CLK or negedge RSTN) begin
-		if(~RSTN) begin
-			result1 <= 0; result2 <= 0; result3 <= 0; result4 <= 0;
-            result5 <= 0; result6 <= 0; result7 <= 0; result8 <= 0;
-            result9 <= 0; result10 <= 0; result11 <= 0; result12 <= 0;
-            result13 <= 0; result14 <= 0; result15 <= 0; result16 <= 0;
-
-            OWEN21 <= 0; OWEN22 <= 0; OWEN23 <= 0; OWEN24 <= 0;
-            OWEN31 <= 0; OWEN32 <= 0; OWEN33 <= 0; OWEN34 <= 0;
-            OWEN41 <= 0; OWEN42 <= 0; OWEN43 <= 0; OWEN44 <= 0;
-
-
-            w21 <= 0; w22 <= 0; w23 <= 0; w24 <= 0;
-            w31 <= 0; w32 <= 0; w33 <= 0; w34 <= 0;
-            w41 <= 0; w42 <= 0; w43 <= 0; w44 <= 0;
-        end
-    end
+  block P0 (wb11, a11, 0, CLK, RSTN, outp_south0, result0, EN_row14, EN11, WEN11, OWEN11);
+    //from north
+    block P1 (wb12, a12, result0, CLK, RSTN, outp_south1, result1, EN_row14, EN12, WEN12, OWEN12);
+    block P2 (wb13, a13, result1, CLK, RSTN, outp_south2, result2, EN_row14, EN13, WEN13, OWEN13);
+    block P3 (wb14, a14, result2, CLK, RSTN, outp_south3, result3, EN_row14, EN14, WEN14, OWEN14);
+    
+    //from west
+    block P4 (outp_south0, a21, 0, CLK, RSTN, outp_south4, result4, EN_row24, EN21, OWEN11, OWEN21);
+    block P8 (outp_south4, a31, 0, CLK, RSTN, outp_south8, result8, EN_row34, EN31, OWEN21, OWEN31);
+    block P12 (outp_south8, a41, 0, CLK, RSTN, outp_south12, result12, EN_row44, EN41, OWEN31, OWEN41);
+    //second row
+    block P5 (outp_south1, a22, result4, CLK, RSTN, outp_south5, result5, EN_row24, EN22, OWEN12, OWEN22);
+    block P6 (outp_south2, a23, result5, CLK, RSTN, outp_south6, result6, EN_row24, EN23, OWEN13, OWEN23);
+    block P7 (outp_south3, a24, result6, CLK, RSTN, outp_south7, result7, EN_row24, EN24, OWEN14, OWEN24);
+    //third row
+    block P9 (outp_south5, a32, result8, CLK, RSTN, outp_south9, result9, EN_row34, EN32, OWEN22, OWEN32);
+    block P10 (outp_south6, a33, result9, CLK, RSTN, outp_south10, result10, EN_row34, EN33, OWEN23, OWEN33);
+    block P11 (outp_south7, a34, result10, CLK, RSTN, outp_south11, result11, EN_row34, EN34, OWEN24, OWEN34);
+    //fourth row
+    block P13 (outp_south9, a42, result12, CLK, RSTN, outp_south13, result13, EN_row44, EN42, OWEN32, OWEN42);
+    block P14 (outp_south10, a43, result13, CLK, RSTN, outp_south14, result14, EN_row44, EN43, OWEN33, OWEN43);
+    block P15 (outp_south11, a44, result14, CLK, RSTN, outp_south15, result15, EN_row44, EN44, OWEN34, OWEN44);
 
 
 
 
 
-
-
-    always @(posedge CLK or negedge RSTN) begin
-		if (control_start) begin
-            w21 <= wb11;
-            w22 <= wb12;
-            w23 <= wb13;
-            w24 <= wb14;
-            w31 <= w21;
-            w32 <= w22;
-            w33 <= w23;
-            w34 <= w24;
-            w41 <= w31;
-            w42 <= w32;
-            w43 <= w33;
-            w44 <= w34;
-
-
-            OWEN21 <= WEN11;
-            OWEN22 <= WEN12;
-            OWEN23 <= WEN13;
-            OWEN24 <= WEN14;
-            OWEN31 <= OWEN21;
-            OWEN32 <= OWEN22;
-            OWEN33 <= OWEN23;
-            OWEN34 <= OWEN24;
-            OWEN41 <= OWEN31;
-            OWEN42 <= OWEN32;
-            OWEN43 <= OWEN33;
-            OWEN44 <= OWEN34;
-
-            
-
-
-            if (EN_row14 == 0 && EN11 == 0 && WEN11 == 0) begin
-			    result1  <=     0      + multi1;
-            end else begin
-                result1 <= 0;
-            end
-            if (EN_row14 == 0 && EN12 == 0 && WEN12 == 0) begin
-			    result2  <=  result1   + multi2;
-            end else begin
-                result2 <= 0;
-            end
-            if (EN_row14 == 0 && EN13 == 0 && WEN13 == 0) begin
-			    result3  <=  result2   + multi3;
-            end else begin
-                result3 <= 0;
-            end
-            if (EN_row14 == 0 && EN14 == 0 && WEN14 == 0) begin
-			    result4  <=  result3   + multi4;
-            end else begin
-                result4 <= 0;
-            end
-
-            
-
-            if (EN_row24 == 0 && EN21 == 0 && OWEN21 == 0) begin
-			    result5  <=     0      + multi5;
-            end else begin
-                result5 <= 0;
-            end
-            if (EN_row24 == 0 && EN22 == 0 && OWEN22 == 0) begin
-			    result6  <=  result5   + multi6;
-            end else begin
-                result6 <= 0;
-            end
-            if (EN_row24 == 0 && EN23 == 0 && OWEN23 == 0) begin
-			    result7  <=  result6   + multi7;
-            end else begin
-                result7 <= 0;
-            end
-            if (EN_row24 == 0 && EN24 == 0 && OWEN24 == 0) begin
-			    result8  <=  result7   + multi8;
-            end else begin
-                result8 <= 0;
-            end
-
-
-
-
-            if (EN_row34 == 0 && EN31 == 0 && OWEN31 == 0) begin
-			    result9  <=     0      + multi9;
-            end else begin
-                result9 <= 0;
-            end
-            if (EN_row34 == 0 && EN32 == 0 && OWEN32 == 0) begin
-			    result10 <=  result9   + multi10;
-            end else begin
-                result10 <= 0;
-            end
-            if (EN_row34 == 0 && EN33 == 0 && OWEN33 == 0) begin
-			    result11 <=  result10  + multi11;
-            end else begin
-                result11 <= 0;
-            end
-            if (EN_row34 == 0 && EN34 == 0 && OWEN34 == 0) begin
-			    result12 <=  result11  + multi12;
-            end else begin
-                result12 <= 0;
-            end
-
-
-            
-            
-            
-            if (EN_row44 == 0 && EN41 == 0 && OWEN41 == 0) begin
-			    result13 <=     0      + multi13;
-            end else begin
-                result13 <= 0;
-            end
-            if (EN_row44 == 0 && EN42 == 0 && OWEN42 == 0) begin
-			    result14 <=  result13  + multi14;
-            end else begin
-                result14 <= 0;
-            end
-            if (EN_row44 == 0 && EN43 == 0 && OWEN43 == 0) begin
-			    result15 <=  result14  + multi15;
-            end else begin
-                result15 <= 0;
-            end
-            if (EN_row44 == 0 && EN44 == 0 && OWEN44 == 0) begin
-			    result16 <=  result15  + multi16;
-            end else begin
-                result16 <= 0;
-            end
-            
-           
-        end
-    end
 
 
     reg [1:0] r_count1;
     reg [3:0] r_count2;
-    reg r_flag;
+    reg [1:0] r_flag;
+
+    reg [15:0] o11, o12, o13, o14, o15, o16, o17, o18;
+    reg [15:0] o21, o22, o23, o24, o25, o26, o27, o28;
+    reg [15:0] o31, o32, o33, o34, o35, o36, o37, o38;
+    reg [15:0] o41, o42, o43, o44, o45, o46, o47, o48;
+    reg [15:0] o51, o52, o53, o54, o55, o56, o57, o58;
+    reg [15:0] o61, o62, o63, o64, o65, o66, o67, o68;
+    reg [15:0] o71, o72, o73, o74, o75, o76, o77, o78;
+    reg [15:0] o81, o82, o83, o84, o85, o86, o87, o88;
 
 
     always @(posedge CLK or negedge RSTN) begin
@@ -1354,6 +1205,78 @@ module macarray (
             r_count1 <= 0;
             r_count2 <= 0;
             r_flag <= 0;
+
+            o11 <= 0;
+            o12 <= 0;
+            o13 <= 0;
+            o14 <= 0;
+            o15 <= 0;
+            o16 <= 0;
+            o17 <= 0;
+            o18 <= 0;
+
+            o21 <= 0;
+            o22 <= 0;
+            o23 <= 0;
+            o24 <= 0;
+            o25 <= 0;
+            o26 <= 0;
+            o27 <= 0;
+            o28 <= 0;
+
+            o31 <= 0;
+            o32 <= 0;
+            o33 <= 0;
+            o34 <= 0;
+            o35 <= 0;
+            o36 <= 0;
+            o37 <= 0;
+            o38 <= 0;
+
+            o41 <= 0;
+            o42 <= 0;
+            o43 <= 0;
+            o44 <= 0;
+            o45 <= 0;
+            o46 <= 0;
+            o47 <= 0;
+            o48 <= 0;
+
+            o51 <= 0;
+            o52 <= 0;
+            o53 <= 0;
+            o54 <= 0;
+            o55 <= 0;
+            o56 <= 0;
+            o57 <= 0;
+            o58 <= 0;
+
+            o61 <= 0;
+            o62 <= 0;
+            o63 <= 0;
+            o64 <= 0;
+            o65 <= 0;
+            o66 <= 0;
+            o67 <= 0;
+            o68 <= 0;
+
+            o71 <= 0;
+            o72 <= 0;
+            o73 <= 0;
+            o74 <= 0;
+            o75 <= 0;
+            o76 <= 0;
+            o77 <= 0;
+            o78 <= 0;
+
+            o81 <= 0;
+            o82 <= 0;
+            o83 <= 0;
+            o84 <= 0;
+            o85 <= 0;
+            o86 <= 0;
+            o87 <= 0;
+            o88 <= 0;
 
         end
     end
@@ -1364,18 +1287,81 @@ module macarray (
                 0: begin
                     r_count1 <= r_count1 + 1;
                     if(r_flag == 0)begin
-                        if(r_count1 == 1)begin
+                        if(r_count1 == 3)begin
                             r_flag <= 1;
                         end
+
                     end else if (r_flag == 1) begin
                         if(r_count1 == 1)begin
+                            o11 <= result3;
+                        end else if(r_count1 == 2) begin
+                            o12 <= result3;
+                            o15 <= result7;
+                        end else if(r_count1 == 3) begin
+                            o13 <= result3;
+                            o16 <= result7;
+                            o21 <= result11;
 
+                            r_flag <= 2;
+                        end
+                    end else if (r_flag == 2) begin
+                        if(r_count1 == 0) begin
+                            o14 <= result3;
+                            o17 <= result7;
+                            o22 <= result11;
+                            o25 <= result15;
+                        end else if(r_count1 == 1) begin
+                            o18 <= result7;
+                            o23 <= result11;
+                            o26 <= result15;
+                        end else if(r_count1 == 2) begin
+                            o24 <= result11;
+                            o27 <= result15;
+                        end else if(r_count1 == 3) begin
+                            o28 <= result15;
+                            r_flag <= 3;
                         end
                     end
 
                 end
                 1: begin
                     r_count1 <= r_count1 + 1;
+                    if(r_flag == 0)begin
+                        if(r_count1 == 3)begin
+                            r_flag <= 1;
+                        end
+
+                    end else if (r_flag == 1) begin
+                        if(r_count1 == 1)begin
+                            o11 <= result3;
+                        end else if(r_count1 == 2) begin
+                            o12 <= result3;
+                            o15 <= result7;
+                        end else if(r_count1 == 3) begin
+                            o13 <= result3;
+                            o16 <= result7;
+                            o21 <= result11;
+
+                            r_flag <= 2;
+                        end
+                    end else if (r_flag == 2) begin
+                        if(r_count1 == 0) begin
+                            o14 <= result3;
+                            o17 <= result7;
+                            o22 <= result11;
+                            o25 <= result15;
+                        end else if(r_count1 == 1) begin
+                            o18 <= result7;
+                            o23 <= result11;
+                            o26 <= result15;
+                        end else if(r_count1 == 2) begin
+                            o24 <= result11;
+                            o27 <= result15;
+                        end else if(r_count1 == 3) begin
+                            o28 <= result15;
+                            r_flag <= 3;
+                        end
+                    end
                 end
                 2: begin
                     r_count1 <= r_count1 + 1;
@@ -1401,6 +1387,39 @@ module macarray (
 
 
 
+
+
+
+
+
 endmodule
 
 
+module block(inp_north, inp_matrix, inp_west, clk, rst, outp_south, result, EN_row, EN_self, WEN, OWEN);
+   input [7:0] inp_north, inp_west, inp_matrix;
+   output reg [7:0] outp_south;
+   input clk, rst;
+   output reg [15:0] result;
+   wire [15:0] multi;
+    input EN_row, EN_self, WEN;
+    output reg OWEN;
+   
+   always @(posedge rst or posedge clk) begin
+      if(~rst) begin
+         result <= 0;
+         outp_south <= 0;
+            OWEN <= 0;
+      end else begin
+         outp_south <= inp_north;  //weight
+            OWEN <= WEN;
+            if (EN_row == 0 && EN_self == 0 && WEN == 0) begin
+             result <= inp_west + multi;
+            end else begin
+                result <= 0;
+            end
+      end
+   end
+   
+   assign multi = inp_north*inp_matrix;
+
+endmodule
