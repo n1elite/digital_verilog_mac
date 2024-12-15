@@ -9,29 +9,52 @@ z2
 !i10f 100
 cModel Technology
 dC:/intelFPGA_lite/20.1
-vmacarray
-Z0 !s110 1734243709
+vblock
+Z0 !s110 1734271767
 !i10b 1
-!s100 KjA]PV9BL_3X[]RRUCKVH0
+!s100 LM75PGKJ?`3Re32oCSakh3
 Z1 !s11b Dg1SIo80bB@j0V0VzS_@n1
-I@f4T;HI:D08P5Y0INKCo02
+I?zVH4P3S_@XchOYe:8`?;0
 Z2 VDg1SIo80bB@j0V0VzS_@n1
 Z3 dC:/2014104049/prj2 (2)/PJ2
-w1734243296
-8C:/2014104049/prj2 (2)/PJ2/macarray.v
-FC:/2014104049/prj2 (2)/PJ2/macarray.v
-!i122 212
-L0 13 1146
+w1734248230
+8C:/2014104049/prj2 (2)/PJ2/block.v
+FC:/2014104049/prj2 (2)/PJ2/block.v
+!i122 492
+L0 1 28
 Z4 OV;L;2020.1;71
 r1
 !s85 0
 31
-Z5 !s108 1734243709.000000
-!s107 C:/2014104049/prj2 (2)/PJ2/macarray.v|
-!s90 -reportprogress|300|-work|work|-stats=none|C:/2014104049/prj2 (2)/PJ2/macarray.v|
+Z5 !s108 1734271767.000000
+!s107 C:/2014104049/prj2 (2)/PJ2/block.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/2014104049/prj2 (2)/PJ2/block.v|
 !i113 1
 Z6 o-work work
 Z7 tCvgOpt 0
+vmacarray
+R0
+!i10b 1
+!s100 PX9aFG<hX82;S:YRBQDBE0
+R1
+IjiA8akYPzZeBIQCM_aGUf0
+R2
+R3
+w1734270689
+8C:/2014104049/prj2 (2)/PJ2/macarray.v
+FC:/2014104049/prj2 (2)/PJ2/macarray.v
+!i122 489
+L0 14 1171
+R4
+r1
+!s85 0
+31
+R5
+!s107 C:/2014104049/prj2 (2)/PJ2/macarray.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/2014104049/prj2 (2)/PJ2/macarray.v|
+!i113 1
+R6
+R7
 vSRAM
 R0
 !i10b 1
@@ -43,7 +66,7 @@ R3
 w1734165389
 8C:/2014104049/prj2 (2)/PJ2/model.v
 FC:/2014104049/prj2 (2)/PJ2/model.v
-!i122 213
+!i122 490
 L0 24 31
 R4
 r1
@@ -57,23 +80,23 @@ R6
 R7
 n@s@r@a@m
 vtestbench
-!s110 1734243710
+R0
 !i10b 1
-!s100 GXWJD8QLUGYX5Yzc55<d42
+!s100 S74goMT2:l65[oWnUh;Ha3
 R1
-I3;zM_DDn;K7?8KdUm:>EF0
+IC^BYc;2`Wja9;?>@3aLOD2
 R2
 R3
-w1734243703
+w1734271666
 8C:/2014104049/prj2 (2)/PJ2/testbench.v
 FC:/2014104049/prj2 (2)/PJ2/testbench.v
-!i122 214
+!i122 491
 L0 11 133
 R4
 r1
 !s85 0
 31
-!s108 1734243710.000000
+R5
 !s107 C:/2014104049/prj2 (2)/PJ2/testbench.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/2014104049/prj2 (2)/PJ2/testbench.v|
 !i113 1
