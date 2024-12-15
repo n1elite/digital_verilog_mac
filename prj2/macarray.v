@@ -1199,6 +1199,7 @@ module macarray (
     reg [15:0] o71, o72, o73, o74, o75, o76, o77, o78;
     reg [15:0] o81, o82, o83, o84, o85, o86, o87, o88;
 
+    reg [3:0] addo;
 
     always @(posedge CLK or negedge RSTN) begin
         if(~RSTN) begin
@@ -1278,6 +1279,8 @@ module macarray (
             o87 <= 0;
             o88 <= 0;
 
+            addo <=0 ;
+
         end
     end
 
@@ -1320,6 +1323,30 @@ module macarray (
                         end else if(r_count1 == 3) begin
                             o28 <= result15;
                             r_flag <= 3;
+                        end
+                    end else if (r_flag == 3) begin
+                        if(r_count1 == 3) begin
+                            r_flag <= 4;
+                        end
+                    end else if (r_flag == 4) begin
+                        if(r_count1 == 3) begin
+                            r_flag <= 5;
+                        end
+                    end else if (r_flag == 5) begin
+                        if(r_count1 == 3) begin
+                            r_flag <= 6;
+                        end
+                    end else if (r_flag == 6) begin
+                        if(r_count1 == 3) begin
+                            r_flag <= 7;
+                        end
+                    end else if (r_flag == 7) begin
+                        if(r_count1 == 3) begin
+                            r_flag <= 8;
+                        end
+                    end else if (r_flag == 8) begin
+                        if(r_count1 == 3) begin
+                            r_flag <= 9;
                         end
                     end
 
@@ -1385,9 +1412,29 @@ module macarray (
         end
     end
 
+    always @(posedge CLK or negedge RSTN) begin
+        if(r_flag == 9)begin
+            addo <= addo +1;
+        end
+        WDATA_O[64:0] <= {o11,o12,o13,o14};
+    end
 
-
-
+    assign ADDR_O   =   addo;
+    assign WDATA_O  =   (ADDR_O == 0) ?  {o11,o12,o13,o14}   :
+                        (ADDR_O == 1) ?  {o15,o16,o17,o18}   :
+                        (ADDR_O == 2) ?  {o21,o22,o23,o24}   :
+                        (ADDR_O == 3) ?  {o25,o26,o27,o28}   :
+                        (ADDR_O == 4) ?  {o31,o32,o33,o34}   :
+                        (ADDR_O == 5) ?  {o35,o36,o37,o38}   :
+                        (ADDR_O == 6) ?  {o41,o42,o43,o44}   :
+                        (ADDR_O == 7) ?  {o45,o46,o47,o48}   :
+                        (ADDR_O == 8) ?  {o51,o52,o53,o54}   :
+                        (ADDR_O == 9) ?  {o55,o56,o56,o57}   :
+                        (ADDR_O == 10) ? {o61,o62,o63,o64}   :
+                        (ADDR_O == 11) ? {o65,o66,o67,o68}   :
+                        (ADDR_O == 12) ? {o71,o72,o73,o74}   :
+                        (ADDR_O == 13) ? {o75,o76,o77,o78}   :
+                        (ADDR_O == 14) ? {o81,o82,o83,o84}   : {o85,o86,o87,o88};
 
 
 
