@@ -196,20 +196,38 @@ module macarray (
     end
 
     always @(posedge CLK or negedge RSTN) begin
-        EN_row12 <= EN_row11;
-        EN_row22 <= EN_row21;
-        EN_row32 <= EN_row31;
-        EN_row42 <= EN_row41;
+        if(EN_I_read == 1) begin
+            EN_row12 <= 0;
+            EN_row22 <= 0;
+            EN_row32 <= 0;
+            EN_row42 <= 0;
 
-        EN_row13 <= EN_row12;
-        EN_row23 <= EN_row22;
-        EN_row33 <= EN_row32;
-        EN_row43 <= EN_row42;
+            EN_row13 <= 0;
+            EN_row23 <= 0;
+            EN_row33 <= 0;
+            EN_row43 <= 0;
 
-        EN_row14 <= EN_row13;
-        EN_row24 <= EN_row23;
-        EN_row34 <= EN_row33;
-        EN_row44 <= EN_row43;
+            EN_row14 <= 0;
+            EN_row24 <= 0;
+            EN_row34 <= 0;
+            EN_row44 <= 0;
+
+        end else if (EN_I_read == 0) begin
+            EN_row12 <= EN_row11;
+            EN_row22 <= EN_row21;
+            EN_row32 <= EN_row31;
+            EN_row42 <= EN_row41;
+
+            EN_row13 <= EN_row12;
+            EN_row23 <= EN_row22;
+            EN_row33 <= EN_row32;
+            EN_row43 <= EN_row42;
+
+            EN_row14 <= EN_row13;
+            EN_row24 <= EN_row23;
+            EN_row34 <= EN_row33;
+            EN_row44 <= EN_row43;
+        end
     end
 
 
@@ -819,7 +837,7 @@ module macarray (
                                     {EN11, EN12, EN13, EN14} <= 4'b1000;
                                     EN_row14 <= 0;
                                 end else begin
-                                    EN_row11 <= 1;
+                                    EN_row12 <= 1;
                                 end
                             end
                             1   :   begin
@@ -828,7 +846,7 @@ module macarray (
                                     {EN21, EN22, EN23, EN24} <= 4'b1000;
                                     EN_row24 <= 0;
                                 end else begin
-                                    EN_row21 <= 1;
+                                    EN_row22 <= 1;
                                 end
                             end 
                             2   :   begin
@@ -837,7 +855,7 @@ module macarray (
                                     {EN31, EN32, EN33, EN34} <= 4'b1000;
                                     EN_row34 <= 0;
                                 end else begin
-                                    EN_row31 <= 1;
+                                    EN_row32 <= 1;
                                 end
                             end
                             3   :   begin
@@ -846,7 +864,7 @@ module macarray (
                                     {EN41, EN42, EN43, EN44} <= 4'b1000;
                                     EN_row44 <= 0;
                                 end else begin
-                                    EN_row41 <= 1;
+                                    EN_row42 <= 1;
                                 end
                             end
                         endcase
@@ -860,7 +878,7 @@ module macarray (
                                     {EN11, EN12, EN13, EN14} <= 4'b1100;
                                     EN_row14 <= 0;
                                 end else begin
-                                    EN_row11 <= 1;
+                                    EN_row13 <= 1;
                                 end
                             end
                             1   :   begin
@@ -869,7 +887,7 @@ module macarray (
                                     {EN21, EN22, EN23, EN24} <= 4'b1100;
                                     EN_row24 <= 0;
                                 end else begin
-                                    EN_row21 <= 1;
+                                    EN_row23 <= 1;
                                 end 
                             end
                             2   :   begin
@@ -878,7 +896,7 @@ module macarray (
                                     {EN31, EN32, EN33, EN34} <= 4'b1100;
                                     EN_row34 <= 0;
                                 end else begin
-                                    EN_row31 <= 1;
+                                    EN_row33 <= 1;
                                 end
                             end
                             3   :   begin
@@ -887,7 +905,7 @@ module macarray (
                                     {EN41, EN42, EN43, EN44} <= 4'b1100;
                                     EN_row44 <= 0;
                                 end else begin
-                                    EN_row41 <= 1;
+                                    EN_row43 <= 1;
                                 end
                             end
                         endcase
@@ -901,7 +919,7 @@ module macarray (
                                     {EN11, EN12, EN13, EN14} <= 4'b1110;
                                     EN_row14 <= 0;
                                 end else begin
-                                    EN_row11 <= 1;
+                                    EN_row14 <= 1;
                                 end
                             end
                             1   :   begin
@@ -910,7 +928,7 @@ module macarray (
                                     {EN21, EN22, EN23, EN24} <= 4'b1110;
                                     EN_row24 <= 0;
                                 end else begin
-                                    EN_row21 <= 1;
+                                    EN_row24 <= 1;
                                 end
                             end
                             2   :   begin
@@ -919,7 +937,7 @@ module macarray (
                                     {EN31, EN32, EN33, EN34} <= 4'b1110;
                                     EN_row34 <= 0;
                                 end else begin
-                                    EN_row31 <= 1;
+                                    EN_row34 <= 1;
                                 end
                             end
                             3   :   begin
@@ -928,7 +946,7 @@ module macarray (
                                     {EN41, EN42, EN43, EN44} <= 4'b1110;
                                     EN_row44 <= 0;
                                 end else begin
-                                    EN_row41 <= 1;
+                                    EN_row44 <= 1;
                                 end
                             end
                         endcase
@@ -986,7 +1004,7 @@ module macarray (
                                     {EN11, EN12, EN13, EN14} <= 4'b1000;
                                     EN_row14 <= 0;
                                 end else begin
-                                    EN_row11 <= 1;
+                                    EN_row12 <= 1;
                                 end
                             end
                             1   :   begin
@@ -995,7 +1013,7 @@ module macarray (
                                     {EN21, EN22, EN23, EN24} <= 4'b1000;
                                     EN_row24 <= 0;
                                 end else begin
-                                    EN_row21 <= 1;
+                                    EN_row22 <= 1;
                                 end 
                             end
                             2   :   begin
@@ -1004,7 +1022,7 @@ module macarray (
                                     {EN31, EN32, EN33, EN34} <= 4'b1000;
                                     EN_row34 <= 0;
                                 end else begin
-                                    EN_row31 <= 1;
+                                    EN_row32 <= 1;
                                 end
                             end
                             3   :   begin
@@ -1013,7 +1031,7 @@ module macarray (
                                     {EN41, EN42, EN43, EN44} <= 4'b1000;
                                     EN_row44 <= 0;
                                 end else begin
-                                    EN_row41 <= 1;
+                                    EN_row42 <= 1;
                                 end
                             end
                         endcase
@@ -1027,7 +1045,7 @@ module macarray (
                                     {EN11, EN12, EN13, EN14} <= 4'b1100;
                                     EN_row14 <= 0;
                                 end else begin
-                                    EN_row11 <= 1;
+                                    EN_row13 <= 1;
                                 end
                             end
                             1   :   begin
@@ -1036,7 +1054,7 @@ module macarray (
                                     {EN21, EN22, EN23, EN24} <= 4'b1100;
                                     EN_row24 <= 0;
                                 end else begin
-                                    EN_row21 <= 1;
+                                    EN_row23 <= 1;
                                 end
                             end
                             2   :   begin
@@ -1045,7 +1063,7 @@ module macarray (
                                     {EN31, EN32, EN33, EN34} <= 4'b1100;
                                     EN_row34 <= 0;
                                 end else begin
-                                    EN_row31 <= 1;
+                                    EN_row33 <= 1;
                                 end
                             end
                             3   :   begin
@@ -1054,7 +1072,7 @@ module macarray (
                                     {EN41, EN42, EN43, EN44} <= 4'b1100;
                                     EN_row44 <= 0;
                                 end else begin
-                                    EN_row41 <= 1;
+                                    EN_row43 <= 1;
                                 end
                             end
                         endcase
@@ -1068,7 +1086,7 @@ module macarray (
                                     {EN11, EN12, EN13, EN14} <= 4'b1110;
                                     EN_row14 <= 0;
                                 end else begin
-                                    EN_row11 <= 1;
+                                    EN_row14 <= 1;
                                 end
                             end
                             1   :   begin
@@ -1077,7 +1095,7 @@ module macarray (
                                     {EN21, EN22, EN23, EN24} <= 4'b1110;
                                     EN_row24 <= 0;
                                 end else begin
-                                    EN_row21 <= 1;
+                                    EN_row24 <= 1;
                                 end
                             end
                             2   :   begin
@@ -1086,7 +1104,7 @@ module macarray (
                                     {EN31, EN32, EN33, EN34} <= 4'b1110;
                                     EN_row34 <= 0;
                                 end else begin
-                                    EN_row31 <= 1;
+                                    EN_row34 <= 1;
                                 end
                             end
                             3   :   begin
@@ -1095,7 +1113,7 @@ module macarray (
                                     {EN41, EN42, EN43, EN44} <= 4'b1110;
                                     EN_row44 <= 0;
                                 end else begin
-                                    EN_row41 <= 1;
+                                    EN_row44 <= 1;
                                 end
                             end
                         endcase
