@@ -91,8 +91,7 @@ module macarray (
     reg EN_I_read;
     reg EN_W_read;
 
-    reg [3:0] control_count;
-    reg toggle;
+    reg control_flag;
     //Variable Initialize
 
     assign M = MNT[11:8];
@@ -180,8 +179,7 @@ module macarray (
             cal_fin2 <= 0;
 
             stop_flag <= 0;
-	    control_count <= 0;
-	    toggle <= 0;
+	    control_flag <= 0;
 
             control_start <= 0;
 
@@ -208,7 +206,6 @@ module macarray (
                 timing <= timing +1;
             end
         end
-	
         if (timing < N_choice)begin
             if(EN_I_read == 1) begin
                 EN_row12 <= 0;
@@ -241,8 +238,7 @@ module macarray (
                 EN_row24 <= EN_row23;
                 EN_row34 <= EN_row33;
                 EN_row44 <= EN_row43;
-	    end 
-	
+	    end
         end else if (timing == N_choice ) begin
             EN_row14 <= 1;
         end else if (timing == N_choice + 1) begin
@@ -251,7 +247,7 @@ module macarray (
             EN_row34 <= 1;
         end else if (timing == N_choice + 3) begin
             EN_row44 <= 1;
-        end 
+        end
     end
 
 
@@ -811,7 +807,6 @@ module macarray (
     always @(posedge CLK or negedge RSTN) begin
         if(control_start == 1) begin
             if(N_flag == 0) begin
-		control_count <= control_count + 1;
                 case (N_first)
                     4: begin
                         case (set_input_line)
@@ -1184,6 +1179,265 @@ module macarray (
     block P13 (outp_south9, a42, result12, CLK, RSTN, outp_south13, result13, EN_row44, EN42, OWEN32, OWEN42);
     block P14 (outp_south10, a43, result13, CLK, RSTN, outp_south14, result14, EN_row44, EN43, OWEN33, OWEN43);
     block P15 (outp_south11, a44, result14, CLK, RSTN, outp_south15, result15, EN_row44, EN44, OWEN34, OWEN44);
+
+
+
+
+
+
+
+    reg [1:0] r_count1;
+    reg [3:0] r_count2;
+    reg [3:0] r_flag;
+
+    reg [15:0] o11, o12, o13, o14, o15, o16, o17, o18;
+    reg [15:0] o21, o22, o23, o24, o25, o26, o27, o28;
+    reg [15:0] o31, o32, o33, o34, o35, o36, o37, o38;
+    reg [15:0] o41, o42, o43, o44, o45, o46, o47, o48;
+    reg [15:0] o51, o52, o53, o54, o55, o56, o57, o58;
+    reg [15:0] o61, o62, o63, o64, o65, o66, o67, o68;
+    reg [15:0] o71, o72, o73, o74, o75, o76, o77, o78;
+    reg [15:0] o81, o82, o83, o84, o85, o86, o87, o88;
+
+    reg [3:0] addo;
+
+    always @(posedge CLK or negedge RSTN) begin
+        if(~RSTN) begin
+            r_count1 <= 0;
+            r_count2 <= 0;
+            r_flag <= 0;
+
+            o11 <= 0;
+            o12 <= 0;
+            o13 <= 0;
+            o14 <= 0;
+            o15 <= 0;
+            o16 <= 0;
+            o17 <= 0;
+            o18 <= 0;
+
+            o21 <= 0;
+            o22 <= 0;
+            o23 <= 0;
+            o24 <= 0;
+            o25 <= 0;
+            o26 <= 0;
+            o27 <= 0;
+            o28 <= 0;
+
+            o31 <= 0;
+            o32 <= 0;
+            o33 <= 0;
+            o34 <= 0;
+            o35 <= 0;
+            o36 <= 0;
+            o37 <= 0;
+            o38 <= 0;
+
+            o41 <= 0;
+            o42 <= 0;
+            o43 <= 0;
+            o44 <= 0;
+            o45 <= 0;
+            o46 <= 0;
+            o47 <= 0;
+            o48 <= 0;
+
+            o51 <= 0;
+            o52 <= 0;
+            o53 <= 0;
+            o54 <= 0;
+            o55 <= 0;
+            o56 <= 0;
+            o57 <= 0;
+            o58 <= 0;
+
+            o61 <= 0;
+            o62 <= 0;
+            o63 <= 0;
+            o64 <= 0;
+            o65 <= 0;
+            o66 <= 0;
+            o67 <= 0;
+            o68 <= 0;
+
+            o71 <= 0;
+            o72 <= 0;
+            o73 <= 0;
+            o74 <= 0;
+            o75 <= 0;
+            o76 <= 0;
+            o77 <= 0;
+            o78 <= 0;
+
+            o81 <= 0;
+            o82 <= 0;
+            o83 <= 0;
+            o84 <= 0;
+            o85 <= 0;
+            o86 <= 0;
+            o87 <= 0;
+            o88 <= 0;
+
+            addo <=0 ;
+
+        end
+    end
+
+    always @(posedge CLK or negedge RSTN) begin
+        if(control_start) begin
+            case (cal_case)
+                0: begin
+                    r_count1 <= r_count1 + 1;
+                    if(r_flag == 0)begin
+                        if(r_count1 == 3)begin
+                            r_flag <= 1;
+                        end
+
+                    end else if (r_flag == 1) begin
+                        if(r_count1 == 1)begin
+                            o11 <= result3;
+                        end else if(r_count1 == 2) begin
+                            o12 <= result3;
+                            o15 <= result7;
+                        end else if(r_count1 == 3) begin
+                            o13 <= result3;
+                            o16 <= result7;
+                            o21 <= result11;
+
+                            r_flag <= 2;
+                        end
+                    end else if (r_flag == 2) begin
+                        if(r_count1 == 0) begin
+                            o14 <= result3;
+                            o17 <= result7;
+                            o22 <= result11;
+                            o25 <= result15;
+                        end else if(r_count1 == 1) begin
+                            o18 <= result7;
+                            o23 <= result11;
+                            o26 <= result15;
+                        end else if(r_count1 == 2) begin
+                            o24 <= result11;
+                            o27 <= result15;
+                        end else if(r_count1 == 3) begin
+                            o28 <= result15;
+                            r_flag <= 3;
+                        end
+                    end else if (r_flag == 3) begin
+                        if(r_count1 == 3) begin
+                            r_flag <= 4;
+                        end
+                    end else if (r_flag == 4) begin
+                        if(r_count1 == 3) begin
+                            r_flag <= 5;
+                        end
+                    end else if (r_flag == 5) begin
+                        if(r_count1 == 3) begin
+                            r_flag <= 6;
+                        end
+                    end else if (r_flag == 6) begin
+                        if(r_count1 == 3) begin
+                            r_flag <= 7;
+                        end
+                    end else if (r_flag == 7) begin
+                        if(r_count1 == 3) begin
+                            r_flag <= 8;
+                        end
+                    end else if (r_flag == 8) begin
+                        if(r_count1 == 3) begin
+                            r_flag <= 9;
+                        end
+                    end
+
+                end
+                1: begin
+                    r_count1 <= r_count1 + 1;
+                    if(r_flag == 0)begin
+                        if(r_count1 == 3)begin
+                            r_flag <= 1;
+                        end
+
+                    end else if (r_flag == 1) begin
+                        if(r_count1 == 1)begin
+                            o11 <= result3;
+                        end else if(r_count1 == 2) begin
+                            o12 <= result3;
+                            o15 <= result7;
+                        end else if(r_count1 == 3) begin
+                            o13 <= result3;
+                            o16 <= result7;
+                            o21 <= result11;
+
+                            r_flag <= 2;
+                        end
+                    end else if (r_flag == 2) begin
+                        if(r_count1 == 0) begin
+                            o14 <= result3;
+                            o17 <= result7;
+                            o22 <= result11;
+                            o25 <= result15;
+                        end else if(r_count1 == 1) begin
+                            o18 <= result7;
+                            o23 <= result11;
+                            o26 <= result15;
+                        end else if(r_count1 == 2) begin
+                            o24 <= result11;
+                            o27 <= result15;
+                        end else if(r_count1 == 3) begin
+                            o28 <= result15;
+                            r_flag <= 3;
+                        end
+                    end
+                end
+                2: begin
+                    r_count1 <= r_count1 + 1;
+                end
+                3: begin
+                    r_count1 <= r_count1 + 1;
+                end
+                4: begin
+                    r_count2 <= r_count2 + 1;
+                end
+                5: begin
+                    r_count2 <= r_count2 + 1;
+                end
+                6: begin
+                    r_count2 <= r_count2 + 1;
+                end
+                7: begin
+                    r_count2 <= r_count2 + 1;
+                end
+            endcase
+        end
+    end
+
+    always @(posedge CLK or negedge RSTN) begin
+        if(r_flag == 9)begin
+            addo <= addo +1;
+        end
+    end
+
+    assign EN_O = (r_flag==9) ? 1 : 0;
+    assign RW_O = (r_flag==9) ? 1 : 0;
+    assign ADDR_O   =   addo;
+    assign WDATA_O  =   (ADDR_O == 0) ?  {o11,o12,o13,o14}   :
+                        (ADDR_O == 1) ?  {o15,o16,o17,o18}   :
+                        (ADDR_O == 2) ?  {o21,o22,o23,o24}   :
+                        (ADDR_O == 3) ?  {o25,o26,o27,o28}   :
+                        (ADDR_O == 4) ?  {o31,o32,o33,o34}   :
+                        (ADDR_O == 5) ?  {o35,o36,o37,o38}   :
+                        (ADDR_O == 6) ?  {o41,o42,o43,o44}   :
+                        (ADDR_O == 7) ?  {o45,o46,o47,o48}   :
+                        (ADDR_O == 8) ?  {o51,o52,o53,o54}   :
+                        (ADDR_O == 9) ?  {o55,o56,o56,o57}   :
+                        (ADDR_O == 10) ? {o61,o62,o63,o64}   :
+                        (ADDR_O == 11) ? {o65,o66,o67,o68}   :
+                        (ADDR_O == 12) ? {o71,o72,o73,o74}   :
+                        (ADDR_O == 13) ? {o75,o76,o77,o78}   :
+                        (ADDR_O == 14) ? {o81,o82,o83,o84}   : {o85,o86,o87,o88};
+
+
 
 
 endmodule

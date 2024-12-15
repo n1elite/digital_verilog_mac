@@ -10,7 +10,7 @@ z2
 cModel Technology
 dC:/intelFPGA_lite/20.1
 vblock
-Z0 !s110 1734271767
+Z0 !s110 1734282673
 !i10b 1
 !s100 LM75PGKJ?`3Re32oCSakh3
 Z1 !s11b Dg1SIo80bB@j0V0VzS_@n1
@@ -20,36 +20,36 @@ Z3 dC:/2014104049/prj2 (2)/PJ2
 w1734248230
 8C:/2014104049/prj2 (2)/PJ2/block.v
 FC:/2014104049/prj2 (2)/PJ2/block.v
-!i122 492
+!i122 636
 L0 1 28
 Z4 OV;L;2020.1;71
 r1
 !s85 0
 31
-Z5 !s108 1734271767.000000
+Z5 !s108 1734282673.000000
 !s107 C:/2014104049/prj2 (2)/PJ2/block.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/2014104049/prj2 (2)/PJ2/block.v|
 !i113 1
 Z6 o-work work
 Z7 tCvgOpt 0
 vmacarray
-R0
+!s110 1734282672
 !i10b 1
-!s100 PX9aFG<hX82;S:YRBQDBE0
+!s100 GiS[<aO7>T6>nU[gVBM2G3
 R1
-IjiA8akYPzZeBIQCM_aGUf0
+ILbzD@Lg`i9`gh:W8@_m1n3
 R2
 R3
-w1734270689
+w1734282393
 8C:/2014104049/prj2 (2)/PJ2/macarray.v
 FC:/2014104049/prj2 (2)/PJ2/macarray.v
-!i122 489
-L0 14 1171
+!i122 633
+L0 14 1430
 R4
 r1
 !s85 0
 31
-R5
+Z8 !s108 1734282672.000000
 !s107 C:/2014104049/prj2 (2)/PJ2/macarray.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/2014104049/prj2 (2)/PJ2/macarray.v|
 !i113 1
@@ -66,13 +66,13 @@ R3
 w1734165389
 8C:/2014104049/prj2 (2)/PJ2/model.v
 FC:/2014104049/prj2 (2)/PJ2/model.v
-!i122 490
+!i122 634
 L0 24 31
 R4
 r1
 !s85 0
 31
-R5
+R8
 !s107 C:/2014104049/prj2 (2)/PJ2/model.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/2014104049/prj2 (2)/PJ2/model.v|
 !i113 1
@@ -82,15 +82,15 @@ n@s@r@a@m
 vtestbench
 R0
 !i10b 1
-!s100 S74goMT2:l65[oWnUh;Ha3
+!s100 GXWJD8QLUGYX5Yzc55<d42
 R1
-IC^BYc;2`Wja9;?>@3aLOD2
+I3;zM_DDn;K7?8KdUm:>EF0
 R2
 R3
-w1734271666
+w1734282668
 8C:/2014104049/prj2 (2)/PJ2/testbench.v
 FC:/2014104049/prj2 (2)/PJ2/testbench.v
-!i122 491
+!i122 635
 L0 11 133
 R4
 r1

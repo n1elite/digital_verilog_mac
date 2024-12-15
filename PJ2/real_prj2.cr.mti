@@ -12,11 +12,12 @@ Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 
 Top level modules:
 	block
 
-} {} {}} {C:/2014104049/prj2 (2)/PJ2/testbench.v} {1 {vlog -work work -stats=none {C:/2014104049/prj2 (2)/PJ2/testbench.v}
+} {} {}} {C:/2014104049/prj2 (2)/PJ2/macarray.v} {1 {vlog -work work -stats=none {C:/2014104049/prj2 (2)/PJ2/macarray.v}
 Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
--- Compiling module testbench
+-- Compiling module macarray
+-- Compiling module block
 
 Top level modules:
-	testbench
+	macarray
 
 } {} {}}
