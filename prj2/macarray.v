@@ -204,7 +204,7 @@ module macarray (
                 timing <= timing +1;
             end
         end
-        if (timing < N_choice + 1)begin
+        if (timing < N_choice)begin
             if(EN_I_read == 1) begin
                 EN_row12 <= 0;
                 EN_row22 <= 0;
@@ -220,7 +220,7 @@ module macarray (
                 EN_row24 <= 0;
                 EN_row34 <= 0;
                 EN_row44 <= 0;
-
+            
             end else if (EN_I_read == 0) begin
                 EN_row12 <= EN_row11;
                 EN_row22 <= EN_row21;
