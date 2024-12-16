@@ -59,6 +59,17 @@ module macarray (
     reg  EN21, EN22, EN23, EN24;
     reg  EN31, EN32, EN33, EN34;
     reg  EN41, EN42, EN43, EN44;
+
+
+    reg EN12_sub;
+    reg EN13_sub1, EN13_sub2;
+    reg EN22_sub;
+    reg EN23_sub1, EN23_sub2;
+    reg EN32_sub;
+    reg EN33_sub1, EN33_sub2;
+    reg EN42_sub;
+    reg EN43_sub1, EN43_sub2;
+    
 	
     reg WEN11, WEN12, WEN13, WEN14;
     reg WEN22, WEN23, WEN24;
@@ -84,6 +95,11 @@ module macarray (
     reg EN_row12, EN_row22, EN_row32, EN_row42;
     reg EN_row13, EN_row23, EN_row33, EN_row43;
     reg EN_row14, EN_row24, EN_row34, EN_row44;
+
+    reg EN_row1_sub1, EN_row1_sub2, EN_row1_sub3, EN_row1_sub4;
+    reg EN_row2_sub1, EN_row2_sub2, EN_row2_sub3, EN_row2_sub4;
+    reg EN_row3_sub1, EN_row3_sub2, EN_row3_sub3, EN_row3_sub4;
+    reg EN_row4_sub1, EN_row4_sub2, EN_row4_sub3, EN_row4_sub4;
 
     reg [3:0] timing;
 
@@ -161,6 +177,20 @@ module macarray (
             EN42 <= 0;
             EN43 <= 0;
             EN44 <= 0;
+
+
+
+            EN12_sub <= 0;
+            EN13_sub1 <= 0; EN13_sub2 <= 0;
+            EN22_sub <= 0;
+            EN23_sub1 <= 0; EN23_sub2 <= 0;
+            EN32_sub <= 0;
+            EN33_sub1 <= 0; EN33_sub2 <= 0;
+            EN42_sub <= 0;
+            EN43_sub1 <= 0; EN43_sub2 <= 0;
+
+
+
             
             read_input_line <= 0;
 	        read_weight_line <= 0;
@@ -179,7 +209,7 @@ module macarray (
             cal_fin2 <= 0;
 
             stop_flag <= 0;
-	    control_flag <= 0;
+	        control_flag <= 0;
 
             control_start <= 0;
 
@@ -193,6 +223,11 @@ module macarray (
             EN_row12 <= 0; EN_row22 <= 0; EN_row32 <= 0; EN_row42 <= 0;
             EN_row13 <= 0; EN_row23 <= 0; EN_row33 <= 0; EN_row43 <= 0;
             EN_row14 <= 0; EN_row24 <= 0; EN_row34 <= 0; EN_row44 <= 0;
+
+            EN_row1_sub1 <= 0; EN_row1_sub2 <= 0; EN_row1_sub3 <= 0; EN_row1_sub4 <= 0;
+            EN_row2_sub1 <= 0; EN_row2_sub2 <= 0; EN_row2_sub3 <= 0; EN_row2_sub4 <= 0;
+            EN_row3_sub1 <= 0; EN_row3_sub2 <= 0; EN_row3_sub3 <= 0; EN_row3_sub4 <= 0;
+            EN_row4_sub1 <= 0; EN_row4_sub2 <= 0; EN_row4_sub3 <= 0; EN_row4_sub4 <= 0;
 
 
             timing <= 0;
@@ -248,6 +283,45 @@ module macarray (
         end else if (timing == N_choice + 3) begin
             EN_row44 <= 1;
         end
+
+        if(EN_row14 == 1)begin
+            EN_row1_sub1 <= 1;
+        end
+        if(EN_row24 == 1)begin
+            EN_row2_sub1 <= 1;
+        end
+        if(EN_row34 == 1)begin
+            EN_row3_sub1 <= 1;
+        end
+        if(EN_row44 == 1)begin
+            EN_row4_sub1 <= 1;
+        end
+
+        EN_row1_sub2 <= EN_row1_sub1;
+        EN_row1_sub3 <= EN_row1_sub2;
+        EN_row1_sub4 <= EN_row1_sub3;
+
+
+        EN_row2_sub2 <= EN_row2_sub1;
+        EN_row2_sub3 <= EN_row2_sub2;
+        EN_row2_sub4 <= EN_row2_sub3;
+
+        EN_row3_sub2 <= EN_row3_sub1;
+        EN_row3_sub3 <= EN_row3_sub2;
+        EN_row3_sub4 <= EN_row3_sub3;
+
+        EN_row4_sub2 <= EN_row4_sub1;
+        EN_row4_sub3 <= EN_row4_sub2;
+        EN_row4_sub4 <= EN_row4_sub3;
+
+        EN12_sub <= EN12;
+        EN13_sub1 <= EN13; EN13_sub2 <= EN13_sub1;
+        EN22_sub <= EN22;
+        EN23_sub1 <= EN23; EN23_sub2 <= EN23_sub1;
+        EN32_sub <= EN32;
+        EN33_sub1 <= EN33; EN33_sub2 <= EN33_sub1;
+        EN42_sub <= EN42;
+        EN43_sub1 <= EN43; EN43_sub2 <= EN43_sub1;
     end
 
 
@@ -1157,28 +1231,28 @@ module macarray (
 	
     // // WRITE YOUR MAC_ARRAY DATAPATH CODE
 
-  block P0 (wb11, a11, 0, CLK, RSTN, outp_south0, result0, 0, EN11, WEN11, OWEN11);
+  block P0 (wb11, a11, 0, CLK, RSTN, outp_south0, result0, EN_row1_sub1, EN11, WEN11, OWEN11);
     //from north
-    block P1 (wb12, a12, result0, CLK, RSTN, outp_south1, result1, 0, EN12, WEN12, OWEN12);
-    block P2 (wb13, a13, result1, CLK, RSTN, outp_south2, result2, 0, EN13, WEN13, OWEN13);
-    block P3 (wb14, a14, result2, CLK, RSTN, outp_south3, result3, 0, EN14, WEN14, OWEN14);
+    block P1 (wb12, a12, result0, CLK, RSTN, outp_south1, result1, EN_row1_sub2, EN12_sub, WEN12, OWEN12);
+    block P2 (wb13, a13, result1, CLK, RSTN, outp_south2, result2, EN_row1_sub3, EN13_sub2, WEN13, OWEN13);
+    block P3 (wb14, a14, result2, CLK, RSTN, outp_south3, result3, EN_row1_sub4, EN14, WEN14, OWEN14);
     
     //from west
-    block P4 (outp_south0, a21, 0, CLK, RSTN, outp_south4, result4, 0, EN21, OWEN11, OWEN21);
-    block P8 (outp_south4, a31, 0, CLK, RSTN, outp_south8, result8, 0, EN31, OWEN21, OWEN31);
-    block P12 (outp_south8, a41, 0, CLK, RSTN, outp_south12, result12, 0, EN41, OWEN31, OWEN41);
+    block P4 (outp_south0, a21, 0, CLK, RSTN, outp_south4, result4, EN_row2_sub1, EN21, OWEN11, OWEN21);
+    block P8 (outp_south4, a31, 0, CLK, RSTN, outp_south8, result8, EN_row3_sub1, EN31, OWEN21, OWEN31);
+    block P12 (outp_south8, a41, 0, CLK, RSTN, outp_south12, result12, EN_row4_sub1, EN41, OWEN31, OWEN41);
     //second row
-    block P5 (outp_south1, a22, result4, CLK, RSTN, outp_south5, result5, 0, EN22, OWEN12, OWEN22);
-    block P6 (outp_south2, a23, result5, CLK, RSTN, outp_south6, result6, 0, EN23, OWEN13, OWEN23);
-    block P7 (outp_south3, a24, result6, CLK, RSTN, outp_south7, result7, 0, EN24, OWEN14, OWEN24);
+    block P5 (outp_south1, a22, result4, CLK, RSTN, outp_south5, result5, EN_row2_sub2, EN22_sub, OWEN12, OWEN22);
+    block P6 (outp_south2, a23, result5, CLK, RSTN, outp_south6, result6, EN_row2_sub3, EN23_sub2, OWEN13, OWEN23);
+    block P7 (outp_south3, a24, result6, CLK, RSTN, outp_south7, result7, EN_row2_sub4, EN24, OWEN14, OWEN24);
     //third row
-    block P9 (outp_south5, a32, result8, CLK, RSTN, outp_south9, result9, 0, EN32, OWEN22, OWEN32);
-    block P10 (outp_south6, a33, result9, CLK, RSTN, outp_south10, result10, 0, EN33, OWEN23, OWEN33);
-    block P11 (outp_south7, a34, result10, CLK, RSTN, outp_south11, result11, 0, EN34, OWEN24, OWEN34);
+    block P9 (outp_south5, a32, result8, CLK, RSTN, outp_south9, result9, EN_row3_sub2, EN32_sub, OWEN22, OWEN32);
+    block P10 (outp_south6, a33, result9, CLK, RSTN, outp_south10, result10, EN_row3_sub3, EN33_sub2, OWEN23, OWEN33);
+    block P11 (outp_south7, a34, result10, CLK, RSTN, outp_south11, result11, EN_row3_sub4, EN34, OWEN24, OWEN34);
     //fourth row
-    block P13 (outp_south9, a42, result12, CLK, RSTN, outp_south13, result13, 0, EN42, OWEN32, OWEN42);
-    block P14 (outp_south10, a43, result13, CLK, RSTN, outp_south14, result14, 0, EN43, OWEN33, OWEN43);
-    block P15 (outp_south11, a44, result14, CLK, RSTN, outp_south15, result15, 0, EN44, OWEN34, OWEN44);
+    block P13 (outp_south9, a42, result12, CLK, RSTN, outp_south13, result13, EN_row4_sub2, EN42_sub, OWEN32, OWEN42);
+    block P14 (outp_south10, a43, result13, CLK, RSTN, outp_south14, result14, EN_row4_sub3, EN43_sub2, OWEN33, OWEN43);
+    block P15 (outp_south11, a44, result14, CLK, RSTN, outp_south15, result15, EN_row4_sub4, EN44, OWEN34, OWEN44);
 
 
 
